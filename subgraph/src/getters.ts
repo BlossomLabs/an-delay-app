@@ -1,8 +1,18 @@
-import { Address } from "@graphprotocol/graph-ts";
-import { DelayApp as DelayAppEntity } from "../generated/schema";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
+import {
+  DelayApp as DelayAppEntity,
+  DelayScript as DelayScriptEntity,
+} from "../generated/schema";
 
 const buildDelayAppEntityId = (appAddress: Address): string => {
   return appAddress.toHexString();
+};
+
+const buildDelayScriptEntityId = (
+  appAddress: Address,
+  scriptIndex: BigInt
+): string => {
+  return `${appAddress.toHexString()}-${scriptIndex.toString()}`;
 };
 
 export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
@@ -16,4 +26,19 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
   }
 
   return delayApp;
+};
+
+export const getDelayScriptEntity = (
+  delayApp: DelayAppEntity,
+  scriptIndex: BigInt
+): DelayScriptEntity => {
+  const delayScriptId = buildDelayScriptEntityId(delayApp.appAddress, scriptIndex);
+  let delayScript = DelayScriptEntity.load(delayScriptId);
+
+  if (!delayScript) {
+    delayScript = new DelayScriptEntity(delayScriptId);
+    delayScript.delayApp = delayApp.id;
+  }
+
+  return delayScript;
 };
