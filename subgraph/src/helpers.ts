@@ -3,6 +3,7 @@ import {
   DelayApp as DelayAppEntity,
   DelayScript as DelayScriptEntity,
 } from "../generated/schema";
+import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
 
 export const buildDelayAppEntityId = (appAddress: Address): string => {
   return appAddress.toHexString();
@@ -45,4 +46,24 @@ export const getDelayScriptEntity = (
   }
 
   return delayScript;
+};
+
+export const updateDelayScript = (
+  appAddress: Address,
+  scriptIndex: BigInt
+): void => {
+  const delayContract = DelayContract.bind(appAddress);
+  const delayScriptRes = delayContract.delayedScripts(scriptIndex);
+
+  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
+    return;
+  }
+
+  const delayScript = getDelayScriptEntity(appAddress, scriptIndex);
+
+  delayScript.evmCallScript = delayScriptRes.getEvmCallScript();
+  delayScript.executionTime = delayScriptRes.getExecutionTime();
+  delayScript.pausedAt = delayScriptRes.getPausedAt();
+
+  delayScript.save();
 };

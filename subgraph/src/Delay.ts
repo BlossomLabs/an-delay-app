@@ -1,4 +1,4 @@
-import { BigInt, store } from "@graphprotocol/graph-ts";
+import { store } from "@graphprotocol/graph-ts";
 import {
   Delay as DelayContract,
   DelayedScriptStored as DelayedScriptStoredEvent,
@@ -11,32 +11,23 @@ import {
 import {
   buildDelayScriptEntityId,
   getDelayAppEntity,
-  getDelayScriptEntity,
+  updateDelayScript,
 } from "./helpers";
 
-export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
-  const appAddress = event.address;
-  const delayContract = DelayContract.bind(appAddress);
-  const scriptIndex = event.params.scriptId;
-  const delayScriptRes = delayContract.delayedScripts(scriptIndex);
-
-  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
-    return;
-  }
-
-  const delayScript = getDelayScriptEntity(appAddress, scriptIndex);
-
-  delayScript.evmCallScript = delayScriptRes.getEvmCallScript();
-  delayScript.executionTime = delayScriptRes.getExecutionTime();
-  delayScript.pausedAt = delayScriptRes.getPausedAt();
-
-  delayScript.save();
+export const handleDelayedScriptStored = ({
+  address,
+  params,
+}: DelayedScriptStoredEvent) => {
+  updateDelayScript(address, params.scriptId);
 };
 
-export const handleExecutionDelaySet = (event: ExecutionDelaySetEvent) => {
-  const delayApp = getDelayAppEntity(event.address);
+export const handleExecutionDelaySet = ({
+  address,
+  params,
+}: ExecutionDelaySetEvent) => {
+  const delayApp = getDelayAppEntity(address);
 
-  delayApp.executionDelay = event.params.executionDelay;
+  delayApp.executionDelay = params.executionDelay;
 
   delayApp.save();
 };
@@ -48,37 +39,18 @@ export const handleExecutedScript = (event: ExecutedScriptEvent) => {
   );
 };
 
-export const handleExecutionPaused = (event: ExecutionPausedEvent) => {
-  const appAddress = event.address;
-  const delayContract = DelayContract.bind(appAddress);
-  const delayScriptRes = delayContract.delayedScripts(event.params.scriptId);
-
-  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
-    return;
-  }
-
-  const delayScript = getDelayScriptEntity(appAddress, event.params.scriptId);
-
-  delayScript.pausedAt = delayScriptRes.getPausedAt();
-
-  delayScript.save();
+export const handleExecutionPaused = ({
+  address,
+  params,
+}: ExecutionPausedEvent) => {
+  updateDelayScript(address, params.scriptId);
 };
 
-export const handleExecutionResumed = (event: ExecutionResumedEvent) => {
-  const appAddress = event.address;
-  const delayContract = DelayContract.bind(appAddress);
-  const delayScriptRes = delayContract.delayedScripts(event.params.scriptId);
-
-  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
-    return;
-  }
-
-  const delayScript = getDelayScriptEntity(appAddress, event.params.scriptId);
-
-  delayScript.executionTime = delayScriptRes.getExecutionTime();
-  delayScript.pausedAt = 0;
-
-  delayScript.save();
+export const handleExecutionResumed = ({
+  address,
+  params,
+}: ExecutionResumedEvent) => {
+  updateDelayScript(address, params.scriptId);
 };
 
 export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {
