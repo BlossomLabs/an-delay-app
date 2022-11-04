@@ -64,5 +64,21 @@ export const handleExecutionPaused = (event: ExecutionPausedEvent) => {
   delayScript.save();
 };
 
-export const handleExecutionResumed = (event: ExecutionResumedEvent) => {};
+export const handleExecutionResumed = (event: ExecutionResumedEvent) => {
+  const appAddress = event.address;
+  const delayContract = DelayContract.bind(appAddress);
+  const delayScriptRes = delayContract.delayedScripts(event.params.scriptId);
+
+  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
+    return;
+  }
+
+  const delayScript = getDelayScriptEntity(appAddress, event.params.scriptId);
+
+  delayScript.executionTime = delayScriptRes.getExecutionTime();
+  delayScript.pausedAt = 0;
+
+  delayScript.save();
+};
+
 export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {};
