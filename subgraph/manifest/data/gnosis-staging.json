@@ -1,0 +1,17 @@
+{
+  "network": "gnosis",
+  "dataSources": {
+    "Organizations": [
+      {
+        "name": "Staging org",
+        "address": "",
+        "startBlock": "10544700"
+      }
+    ],
+    "OrganizationFactories": [],
+    "OrganizationTemplates": [],
+    "LegacyOrganizationTemplates": [],
+    "TokenFactories": [],
+    "Tokens": []
+  }
+}
