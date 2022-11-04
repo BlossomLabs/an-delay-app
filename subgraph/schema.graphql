@@ -1,3 +1,19 @@
+type DelayApp @entity {
+  id: ID!
+  appAddress: Bytes!
+  orgAddress: Bytes!
+  executionDelay: Int!
+  delayedScriptsNewIndex: Int!
+  delayScripts: [DelayScript!]!
+}
+
+type DelayScript @entity {
+  id: ID!
+  executionTime: Int!
+  pausedAt: Int!
+  evmCallScript: Bytes!
+}
+
 type AragonInfo @entity {
   id: ID!
   orgs: [Bytes!]!
