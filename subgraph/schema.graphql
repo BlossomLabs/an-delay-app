@@ -3,7 +3,6 @@ type DelayApp @entity {
   appAddress: Bytes!
   orgAddress: Bytes!
   executionDelay: Int!
-  delayedScriptsNewIndex: Int!
   delayScripts: [DelayScript!]!
 }
 

@@ -1,4 +1,17 @@
 import { Address } from "@graphprotocol/graph-ts";
+import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
+import { getDelayAppEntity } from "./getters";
+
+const setUpDelayApp = (appAddress: Address) => {
+  const delayApp = getDelayAppEntity(appAddress);
+  const delayContract = DelayContract.bind(appAddress);
+  const executionDelay = delayContract.executionDelay();
+
+  delayApp.executionDelay = executionDelay;
+  delayApp.orgAddress = delayContract.kernel();
+
+  delayApp.save();
+};
 
 // an-delay-app.open.aragonpm.eth
 const AN_DELAY_APP_ID =
@@ -23,6 +36,6 @@ export function getTemplateForApp(appId: string): string | null {
 
 export function onOrgTemplateCreated(orgAddress: Address): void {}
 export function onAppTemplateCreated(appAddress: Address, appId: string): void {
-  // setUpApp(appAddress);
+  setUpDelayApp(appAddress);
 }
 export function onTokenTemplateCreated(tokenAddress: Address): void {}
