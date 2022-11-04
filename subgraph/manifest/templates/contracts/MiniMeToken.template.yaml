@@ -1,11 +1,20 @@
-# DAOKit
+# MiniMeToken
 - kind: ethereum/contract
+  {{#name}}
   name: {{name}}
+  {{/name}}
+  {{^name}}
+  name: MiniMeToken
+  {{/name}}
   network: {{network}}
   source:
-    abi: DAOKit
+    abi: MiniMeToken
+    {{#address}}
     address: '{{address}}'
+    {{/address}}
+    {{#startBlock}}
     startBlock: {{startBlock}}
+    {{/startBlock}}
   mapping:
     kind: ethereum/events
     apiVersion: 0.0.5
@@ -26,10 +35,13 @@
       - name: MiniMeTokenFactory
         file: ./abis/MiniMeTokenFactory.json
     eventHandlers:
-      - event: DeployInstance(address,indexed address)
-        handler: handleDeployInstance
-      - event: InstalledApp(address,bytes32)
-        handler: handleInstalledApp
-      - event: DeployToken(address,indexed address)
-        handler: handleDeployToken
-    file: ./src/aragon/mappings/DAOKit.ts
+      - event: ClaimedTokens(indexed address,indexed address,uint256)
+        handler: handleClaimedTokens
+      - event: Transfer(indexed address,indexed address,uint256)
+        handler: handleTransfer
+      - event: NewCloneToken(indexed address,uint256)
+        handler: handleNewCloneToken
+      - event: Approval(indexed address,indexed address,uint256)
+        handler: handleApproval
+    file: ./src/aragon/mappings/MiniMeToken.ts
+

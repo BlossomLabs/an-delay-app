@@ -17,13 +17,13 @@
     {{/startBlock}}
   mapping:
     kind: ethereum/events
-    apiVersion: 0.0.1
+    apiVersion: 0.0.5
     language: wasm/assemblyscript
     entities:
       - NoEnt
     abis:
-      - name: ConvictionVoting
-        file: ./abis/ConvictionVoting.json
+      - name: Delay
+        file: ./abis/Delay.json
       - name: DAOFactory
         file: ./abis/DAOFactory.json
       - name: DAOKit

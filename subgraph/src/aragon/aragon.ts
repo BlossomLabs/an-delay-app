@@ -1,6 +1,6 @@
 import { Address, DataSourceTemplate } from '@graphprotocol/graph-ts'
 import { AragonInfo as AragonInfoEntity } from '../../generated/schema'
-import { Kernel as KernelTemplate } from '../../generated/templates'
+import { Kernel as KernelTemplate, MiniMeToken as MiniMeTokenTemplate} from '../../generated/templates'
 import * as hooks from '../aragon-hooks'
 
 export function processOrg(orgAddress: Address): void {
@@ -21,6 +21,15 @@ export function processApp(appAddress: Address, appId: string): void {
     }
 
     _registerEntity(appAddress, 'app')
+  }
+}
+
+export function processToken(tokenAddress: Address): void {
+  if (!_isRegistered(tokenAddress, 'token')) {
+    MiniMeTokenTemplate.create(tokenAddress)
+    hooks.onTokenTemplateCreated(tokenAddress)
+
+    _registerEntity(tokenAddress, 'token')
   }
 }
 
