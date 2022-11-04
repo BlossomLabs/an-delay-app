@@ -81,4 +81,9 @@ export const handleExecutionResumed = (event: ExecutionResumedEvent) => {
   delayScript.save();
 };
 
-export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {};
+export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {
+  store.remove(
+    "DelayScript",
+    buildDelayScriptEntityId(event.address, event.params.scriptId)
+  );
+};
