@@ -20,7 +20,7 @@ export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
     return;
   }
 
-  const delayApp = getDelayAppEntity(appAddress)
+  const delayApp = getDelayAppEntity(appAddress);
   const delayScript = getDelayScriptEntity(delayApp, scriptIndex);
 
   delayScript.evmCallScript = delayScriptRes.getEvmCallScript();
@@ -30,7 +30,14 @@ export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
   delayScript.save();
 };
 
-export const handleExecutionDelaySet = (event: ExecutionDelaySetEvent) => {};
+export const handleExecutionDelaySet = (event: ExecutionDelaySetEvent) => {
+  const delayApp = getDelayAppEntity(event.address);
+
+  delayApp.executionDelay = event.params.executionDelay;
+
+  delayApp.save();
+};
+
 export const handleExecutedScript = (event: ExecutedScriptEvent) => {};
 export const handleExecutionPaused = (event: ExecutionPausedEvent) => {};
 export const handleExecutionResumed = (event: ExecutionResumedEvent) => {};
