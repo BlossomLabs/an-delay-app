@@ -3,7 +3,7 @@ type DelayApp @entity {
   appAddress: Bytes!
   orgAddress: Bytes!
   executionDelay: Int!
-  delayScripts: [DelayScript!]!
+  delayScripts: [DelayScript!]! @derivedFrom(field: "delayApp")
 }
 
 type DelayScript @entity {
@@ -11,6 +11,7 @@ type DelayScript @entity {
   executionTime: Int!
   pausedAt: Int!
   evmCallScript: Bytes!
+  delayApp: DelayApp!
 }
 
 type AragonInfo @entity {
