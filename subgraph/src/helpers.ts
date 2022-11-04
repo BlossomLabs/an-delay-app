@@ -29,10 +29,14 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
 };
 
 export const getDelayScriptEntity = (
-  delayApp: DelayAppEntity,
+  appAddress: Address,
   scriptIndex: BigInt
 ): DelayScriptEntity => {
-  const delayScriptId = buildDelayScriptEntityId(delayApp.appAddress, scriptIndex);
+  const delayApp = getDelayAppEntity(appAddress);
+  const delayScriptId = buildDelayScriptEntityId(
+    delayApp.appAddress,
+    scriptIndex
+  );
   let delayScript = DelayScriptEntity.load(delayScriptId);
 
   if (!delayScript) {

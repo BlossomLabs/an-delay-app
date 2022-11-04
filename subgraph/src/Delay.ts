@@ -8,7 +8,11 @@ import {
   ExecutionPaused as ExecutionPausedEvent,
   ExecutionResumed as ExecutionResumedEvent,
 } from "../generated/templates/Delay/Delay";
-import { buildDelayScriptEntityId, getDelayAppEntity, getDelayScriptEntity } from "./helpers";
+import {
+  buildDelayScriptEntityId,
+  getDelayAppEntity,
+  getDelayScriptEntity,
+} from "./helpers";
 
 export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
   const appAddress = event.address;
@@ -20,8 +24,7 @@ export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
     return;
   }
 
-  const delayApp = getDelayAppEntity(appAddress);
-  const delayScript = getDelayScriptEntity(delayApp, scriptIndex);
+  const delayScript = getDelayScriptEntity(appAddress, scriptIndex);
 
   delayScript.evmCallScript = delayScriptRes.getEvmCallScript();
   delayScript.executionTime = delayScriptRes.getExecutionTime();
@@ -39,9 +42,27 @@ export const handleExecutionDelaySet = (event: ExecutionDelaySetEvent) => {
 };
 
 export const handleExecutedScript = (event: ExecutedScriptEvent) => {
-  store.remove('DelayScript', buildDelayScriptEntityId(event.address, event.params.scriptId))
+  store.remove(
+    "DelayScript",
+    buildDelayScriptEntityId(event.address, event.params.scriptId)
+  );
 };
 
-export const handleExecutionPaused = (event: ExecutionPausedEvent) => {};
+export const handleExecutionPaused = (event: ExecutionPausedEvent) => {
+  const appAddress = event.address;
+  const delayContract = DelayContract.bind(appAddress);
+  const delayScriptRes = delayContract.delayedScripts(event.params.scriptId);
+
+  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
+    return;
+  }
+
+  const delayScript = getDelayScriptEntity(appAddress, event.params.scriptId);
+
+  delayScript.pausedAt = delayScriptRes.getPausedAt();
+
+  delayScript.save();
+};
+
 export const handleExecutionResumed = (event: ExecutionResumedEvent) => {};
 export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {};
