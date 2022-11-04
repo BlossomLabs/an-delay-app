@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
   Delay as DelayContract,
   DelayedScriptStored as DelayedScriptStoredEvent,
@@ -8,7 +8,7 @@ import {
   ExecutionPaused as ExecutionPausedEvent,
   ExecutionResumed as ExecutionResumedEvent,
 } from "../generated/templates/Delay/Delay";
-import { getDelayAppEntity, getDelayScriptEntity } from "./getters";
+import { buildDelayScriptEntityId, getDelayAppEntity, getDelayScriptEntity } from "./helpers";
 
 export const handleDelayedScriptStored = (event: DelayedScriptStoredEvent) => {
   const appAddress = event.address;
@@ -38,7 +38,10 @@ export const handleExecutionDelaySet = (event: ExecutionDelaySetEvent) => {
   delayApp.save();
 };
 
-export const handleExecutedScript = (event: ExecutedScriptEvent) => {};
+export const handleExecutedScript = (event: ExecutedScriptEvent) => {
+  store.remove('DelayScript', buildDelayScriptEntityId(event.address, event.params.scriptId))
+};
+
 export const handleExecutionPaused = (event: ExecutionPausedEvent) => {};
 export const handleExecutionResumed = (event: ExecutionResumedEvent) => {};
 export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {};

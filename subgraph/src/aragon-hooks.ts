@@ -1,6 +1,6 @@
 import { Address } from "@graphprotocol/graph-ts";
 import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
-import { getDelayAppEntity } from "./getters";
+import { getDelayAppEntity } from "./helpers";
 
 const setUpDelayApp = (appAddress: Address) => {
   const delayApp = getDelayAppEntity(appAddress);

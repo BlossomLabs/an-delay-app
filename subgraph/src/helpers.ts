@@ -4,11 +4,11 @@ import {
   DelayScript as DelayScriptEntity,
 } from "../generated/schema";
 
-const buildDelayAppEntityId = (appAddress: Address): string => {
+export const buildDelayAppEntityId = (appAddress: Address): string => {
   return appAddress.toHexString();
 };
 
-const buildDelayScriptEntityId = (
+export const buildDelayScriptEntityId = (
   appAddress: Address,
   scriptIndex: BigInt
 ): string => {
