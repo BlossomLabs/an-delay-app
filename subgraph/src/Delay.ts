@@ -14,48 +14,38 @@ import {
   updateDelayScript,
 } from "./helpers";
 
-export const handleDelayedScriptStored = ({
-  address,
-  params,
-}: DelayedScriptStoredEvent) => {
-  updateDelayScript(address, params.scriptId);
+export const handleDelayedScriptStored = (
+  e: DelayedScriptStoredEvent
+): void => {
+  updateDelayScript(e.address, e.params.scriptId);
 };
 
-export const handleExecutionDelaySet = ({
-  address,
-  params,
-}: ExecutionDelaySetEvent) => {
-  const delayApp = getDelayAppEntity(address);
+export const handleExecutionDelaySet = (e: ExecutionDelaySetEvent): void => {
+  const delayApp = getDelayAppEntity(e.address);
 
-  delayApp.executionDelay = params.executionDelay;
+  delayApp.executionDelay = e.params.executionDelay;
 
   delayApp.save();
 };
 
-export const handleExecutedScript = (event: ExecutedScriptEvent) => {
+export const handleExecutedScript = (e: ExecutedScriptEvent): void => {
   store.remove(
     "DelayScript",
-    buildDelayScriptEntityId(event.address, event.params.scriptId)
+    buildDelayScriptEntityId(e.address, e.params.scriptId)
   );
 };
 
-export const handleExecutionPaused = ({
-  address,
-  params,
-}: ExecutionPausedEvent) => {
-  updateDelayScript(address, params.scriptId);
+export const handleExecutionPaused = (e: ExecutionPausedEvent): void => {
+  updateDelayScript(e.address, e.params.scriptId);
 };
 
-export const handleExecutionResumed = ({
-  address,
-  params,
-}: ExecutionResumedEvent) => {
-  updateDelayScript(address, params.scriptId);
+export const handleExecutionResumed = (e: ExecutionResumedEvent): void => {
+  updateDelayScript(e.address, e.params.scriptId);
 };
 
-export const handleExecutionCancelled = (event: ExecutionCancelledEvent) => {
+export const handleExecutionCancelled = (e: ExecutionCancelledEvent): void => {
   store.remove(
     "DelayScript",
-    buildDelayScriptEntityId(event.address, event.params.scriptId)
+    buildDelayScriptEntityId(e.address, e.params.scriptId)
   );
 };

@@ -35,7 +35,7 @@ export const getDelayScriptEntity = (
 ): DelayScriptEntity => {
   const delayApp = getDelayAppEntity(appAddress);
   const delayScriptId = buildDelayScriptEntityId(
-    delayApp.appAddress,
+    Address.fromBytes(delayApp.appAddress),
     scriptIndex
   );
   let delayScript = DelayScriptEntity.load(delayScriptId);

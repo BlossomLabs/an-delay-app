@@ -2,14 +2,14 @@ type DelayApp @entity {
   id: ID!
   appAddress: Bytes!
   orgAddress: Bytes!
-  executionDelay: Int!
+  executionDelay: BigInt!
   delayScripts: [DelayScript!]! @derivedFrom(field: "delayApp")
 }
 
 type DelayScript @entity {
   id: ID!
-  executionTime: Int!
-  pausedAt: Int!
+  executionTime: BigInt!
+  pausedAt: BigInt!
   evmCallScript: Bytes!
   delayApp: DelayApp!
 }
