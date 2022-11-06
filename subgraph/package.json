@@ -1,0 +1,23 @@
+{
+  "name": "@blossom-labs/subgraph-an-delay-app",
+  "version": "0.0.1",
+  "scripts": {
+    "codegen": "rm -rf generated; graph codegen",
+    "build": "rm -rf build; graph build",
+    "manifest-gnosis": "env scripts/build-manifest.sh gnosis",
+    "manifest-gnosis-staging": "env STAGING=true scripts/build-manifest.sh gnosis",
+    "create-local": "graph create an-delay --node http://127.0.0.1:8020",
+    "deploy-local": "graph deploy an-delay --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
+    "deploy-gnosis": "scripts/deploy.sh blossomlabs an-delay gnosis",
+    "deploy-gnosis-staging": "STAGING=true scripts/deploy.sh blossomlabs an-delay gnosis"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.35.0",
+    "@graphprotocol/graph-ts": "^0.28.1",
+    "mustache": "^4.2.0"
+  }
+}

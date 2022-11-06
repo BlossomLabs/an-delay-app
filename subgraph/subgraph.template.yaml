@@ -1,0 +1,46 @@
+# Do not edit subgraph.yaml,this is a generated file.
+# Instead, edit subgraph.template.yaml and run `yarn manifest-<network>-[staging]`
+specVersion: 0.0.5
+description: A template for Aragon subgraphs
+repository: https://github.com/aragon/connect
+schema:
+  file: ./schema.graphql
+dataSources:
+{{> Organizations.yaml}}
+{{> OrganizationFactories.yaml}}
+{{> OrganizationTemplates.yaml}}
+{{> LegacyOrganizationTemplates.yaml}}
+{{> TokenFactories.yaml}}
+{{> Tokens.yaml}}
+templates:
+  {{> Kernel.template.yaml}}
+  {{> MiniMeToken.template.yaml}}
+  - kind: ethereum/contract
+    name: Delay
+    network: {{network}}
+    source:
+      abi: Delay
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DelayApp
+        - DelayScript
+      abis:
+        - name: Delay
+          file: ./abis/Delay.json
+      eventHandlers:
+        - event: DelayedScriptStored(uint256)
+          handler: handleDelayedScriptStored
+        - event: ExecutionDelaySet(uint64)
+          handler: handleExecutionDelaySet
+        - event: ExecutedScript(uint256)
+          handler: handleExecutedScript
+        - event: ExecutionPaused(uint256)
+          handler: handleExecutionPaused
+        - event: ExecutionResumed(uint256)
+          handler: handleExecutionResumed
+        - event: ExecutionCancelled(uint256)
+          handler: handleExecutionCancelled
+      file: ./src/Delay.ts
