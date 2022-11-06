@@ -3,9 +3,9 @@
   "dataSources": {
     "Organizations": [
       {
-        "name": "Staging org",
-        "address": "",
-        "startBlock": "10544700"
+        "name": "tao-test",
+        "address": "0x6C727F89359cF1D45dc5a96610937Ea34DadC957",
+        "startBlock": "24637048"
       }
     ],
     "OrganizationFactories": [],
