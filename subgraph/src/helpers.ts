@@ -23,7 +23,6 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
   if (!delayApp) {
     delayApp = new DelayAppEntity(delayAppId);
     delayApp.appAddress = appAddress;
-    delayApp.delayScripts = [];
   }
 
   return delayApp;

@@ -14,38 +14,38 @@ import {
   updateDelayScript,
 } from "./helpers";
 
-export const handleDelayedScriptStored = (
+export function handleDelayedScriptStored(
   e: DelayedScriptStoredEvent
-): void => {
+): void {
   updateDelayScript(e.address, e.params.scriptId);
 };
 
-export const handleExecutionDelaySet = (e: ExecutionDelaySetEvent): void => {
+export function handleExecutionDelaySet(e: ExecutionDelaySetEvent): void {
   const delayApp = getDelayAppEntity(e.address);
 
   delayApp.executionDelay = e.params.executionDelay;
 
   delayApp.save();
-};
+}
 
-export const handleExecutedScript = (e: ExecutedScriptEvent): void => {
+export function handleExecutedScript(e: ExecutedScriptEvent): void {
   store.remove(
     "DelayScript",
     buildDelayScriptEntityId(e.address, e.params.scriptId)
   );
-};
+}
 
-export const handleExecutionPaused = (e: ExecutionPausedEvent): void => {
+export function handleExecutionPaused(e: ExecutionPausedEvent): void {
   updateDelayScript(e.address, e.params.scriptId);
-};
+}
 
-export const handleExecutionResumed = (e: ExecutionResumedEvent): void => {
+export function handleExecutionResumed(e: ExecutionResumedEvent): void {
   updateDelayScript(e.address, e.params.scriptId);
-};
+}
 
-export const handleExecutionCancelled = (e: ExecutionCancelledEvent): void => {
+export function handleExecutionCancelled(e: ExecutionCancelledEvent): void {
   store.remove(
     "DelayScript",
     buildDelayScriptEntityId(e.address, e.params.scriptId)
   );
-};
+}
