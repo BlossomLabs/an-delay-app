@@ -13,9 +13,10 @@ const setUpDelayApp = (appAddress: Address): void => {
   delayApp.save();
 };
 
-// an-delay-app.open.aragonpm.eth
-const AN_DELAY_APP_ID =
-  "0xcaa1392b514418cf88a239902c9ccafb9c9026f9755ec4e1992da02c0e765f73";
+const AN_DELAY_APP_IDS = [
+  "0x13351f498ea57d9ad3e357afdb38bebae832341c89e544d5e8091ead272f605d", // an-delay.open.aragonpm.eth
+  "0x89a9bbd656859e3d78cabb826d05f627ef0f61f4b6ddd49a749728495af630a2", // delay.open.aragonpm.eth
+];
 
 /*
  * Called when an app proxy is detected.
@@ -27,7 +28,7 @@ const AN_DELAY_APP_ID =
  * which must have the same name.
  */
 export function getTemplateForApp(appId: string): string | null {
-  if (appId === AN_DELAY_APP_ID) {
+  if (AN_DELAY_APP_IDS.includes(appId)) {
     return "Delay";
   } else {
     return null;
