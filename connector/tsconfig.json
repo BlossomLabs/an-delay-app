@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "dist/esm",
-    "rootDir": "src",
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "baseUrl": ".",
