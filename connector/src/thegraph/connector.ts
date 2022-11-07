@@ -50,7 +50,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
     this.#gql.close()
   }
 
-  delayApp(appAddress: string): Promise<ANDelay> {
+  delayApp(appAddress: string): Promise<DelayAppData> {
     return this.#gql.performQueryWithParser(
       GET_DELAY_APP('query'),
       { id: appAddress },
@@ -60,7 +60,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
 
   onDelayApp(
     appAddress: string,
-    callback: SubscriptionCallback<ANDelay>
+    callback: SubscriptionCallback<DelayAppData>
   ): SubscriptionHandler {
     return this.#gql.subscribeToQueryWithParser(
       GET_DELAY_APP('subscription'),

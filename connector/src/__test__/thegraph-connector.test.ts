@@ -19,9 +19,10 @@ describe('AN Delay', () => {
     const anDelayApp = await connector.delayApp(AN_DELAY_APP_ADDRESS)
 
     expect(anDelayApp).toMatchInlineSnapshot(`
-      ANDelay {
+      Object {
         "appAddress": "0x67dbb8c3002f1b2833c662537ccfc3d17b82001e",
         "executionDelay": "3600",
+        "id": "0x67dbb8c3002f1b2833c662537ccfc3d17b82001e",
         "orgAddress": "0x6c727f89359cf1d45dc5a96610937ea34dadc957",
       }
     `)

@@ -1,10 +1,10 @@
 import { QueryResult } from '@1hive/connect-thegraph'
-import { ANDelay } from '../../models/ANDelay'
+import { DelayAppData } from '../../types'
 
 export const parseDelayApp = (
   result: QueryResult,
   connector: any
-): ANDelay | null => {
+): DelayAppData | null => {
   const delayApp = result.data.delayApp
 
   if (!delayApp) {
@@ -13,6 +13,5 @@ export const parseDelayApp = (
 
   const { appAddress, executionDelay, id, orgAddress } = delayApp
 
-  return new ANDelay({ appAddress, executionDelay, id, orgAddress }, connector)
+  return { appAddress, executionDelay, id, orgAddress }
 }
-

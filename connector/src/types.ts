@@ -25,10 +25,11 @@ export interface DelayScriptData {
 }
 
 export interface IANDelayConnector {
-  delayApp(appAddress: Address): Promise<ANDelay>
+  disconnect(): Promise<void>
+  delayApp(appAddress: Address): Promise<DelayAppData>
   onDelayApp(
     appAddress: Address,
-    callback: SubscriptionCallback<ANDelay>
+    callback: SubscriptionCallback<DelayAppData>
   ): SubscriptionHandler
   delayScripts(
     appAddress: Address,
