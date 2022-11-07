@@ -15,3 +15,4 @@ export const parseDelayApp = (
 
   return new ANDelay({ appAddress, executionDelay, id, orgAddress }, connector)
 }
+

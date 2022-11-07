@@ -1,5 +1,7 @@
 import { ErrorException } from '@1hive/connect-core'
 import { GraphQLWrapper, QueryResult } from '@1hive/connect-thegraph'
+import { ANDelay } from '../models/ANDelay'
+import { DelayScript } from '../models/DelayScripts'
 import {
   DelayAppData,
   DelayScriptData,
@@ -7,6 +9,7 @@ import {
   SubscriptionCallback,
   SubscriptionHandler,
 } from '../types'
+import { parseDelayScripts } from './parsers'
 import { parseDelayApp } from './parsers/delayApp'
 import { GET_DELAY_APP, GET_DELAY_SCRIPTS } from './queries'
 
@@ -47,7 +50,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
     this.#gql.close()
   }
 
-  delayApp(appAddress: string): Promise<DelayAppData> {
+  delayApp(appAddress: string): Promise<ANDelay> {
     return this.#gql.performQueryWithParser(
       GET_DELAY_APP('query'),
       { id: appAddress },
@@ -57,7 +60,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
 
   onDelayApp(
     appAddress: string,
-    callback: SubscriptionCallback<DelayAppData>
+    callback: SubscriptionCallback<ANDelay>
   ): SubscriptionHandler {
     return this.#gql.subscribeToQueryWithParser(
       GET_DELAY_APP('subscription'),
@@ -67,16 +70,37 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
     )
   }
 
-  delayScripts(appAddress: string): Promise<DelayScriptData> {
-    throw new Error('Method not implemented.')
+  delayScripts(
+    appAddress: string,
+    first: number,
+    skip: number
+  ): Promise<DelayScript[]> {
+    return this.#gql.performQueryWithParser(
+      GET_DELAY_SCRIPTS('query'),
+      {
+        appAddress,
+        first,
+        skip,
+      },
+      (result: QueryResult) => parseDelayScripts(result)
+    )
   }
 
   onDelayScripts(
     appAddress: string,
     first: number,
     skip: number,
-    callback: SubscriptionCallback<DelayScriptData>
+    callback: SubscriptionCallback<DelayScript[]>
   ): SubscriptionHandler {
-    throw new Error('Method not implemented.')
+    return this.#gql.subscribeToQueryWithParser(
+      GET_DELAY_SCRIPTS('subscription'),
+      {
+        appAddress,
+        first,
+        skip,
+      },
+      callback,
+      (result: QueryResult) => parseDelayScripts(result)
+    )
   }
 }

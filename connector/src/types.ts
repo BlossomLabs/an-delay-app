@@ -1,3 +1,6 @@
+import { ANDelay } from './models/ANDelay'
+import { DelayScript } from './models/DelayScripts'
+
 export type Address = string
 
 export type SubscriptionHandler = { unsubscribe: () => void }
@@ -17,21 +20,25 @@ export interface DelayAppData {
 export interface DelayScriptData {
   id: string
   evmCallScript: string
-  executionTime: number
-  pausedAt: number
+  executionTime: string
+  pausedAt: string
 }
 
 export interface IANDelayConnector {
-  delayApp(appAddress: Address): Promise<DelayAppData>
+  delayApp(appAddress: Address): Promise<ANDelay>
   onDelayApp(
     appAddress: Address,
-    callback: SubscriptionCallback<DelayAppData>
+    callback: SubscriptionCallback<ANDelay>
   ): SubscriptionHandler
-  delayScripts(appAddress: Address): Promise<DelayScriptData>
+  delayScripts(
+    appAddress: Address,
+    first: number,
+    skip: number
+  ): Promise<DelayScript[]>
   onDelayScripts(
     appAddress: Address,
     first: number,
     skip: number,
-    callback: SubscriptionCallback<DelayScriptData>
+    callback: SubscriptionCallback<DelayScript[]>
   ): SubscriptionHandler
 }
