@@ -37,7 +37,7 @@ describe('AN Delay', () => {
     const appData = await anDelay.appData()
 
     expect(appData).toMatchInlineSnapshot(`
-      Object {
+      {
         "appAddress": "0x67dbb8c3002f1b2833c662537ccfc3d17b82001e",
         "executionDelay": "3600",
         "id": "0x67dbb8c3002f1b2833c662537ccfc3d17b82001e",
@@ -50,7 +50,7 @@ describe('AN Delay', () => {
     const delayScripts = await anDelay.delayScripts()
 
     expect(delayScripts).toMatchInlineSnapshot(`
-      Array [
+      [
         DelayScript {
           "evmCallScript": "0x000000017574c9cc110d3148e904e37391fd1c2f3382bc7c00000124d948d468000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e0000000014d9aeed1277f139f8b379b984b5326d8bb850f4d000000c4f6364846000000000000000000000000e91d153e0b41518a2ce8dd3d7944fa863463a97d0000000000000000000000003c048d78103b4e504f5ad04a7dca5e0cf752ace60000000000000000000000000000000000000000000000008ac7230489e800000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000001c7061796d656e7420666f7220646576656c6f706d656e7420776f726b00000000",
           "executionTime": "1666060965",
@@ -60,17 +60,17 @@ describe('AN Delay', () => {
     `)
   })
 
-  it('should set a new execution delay correctly', () => {})
+  // it('should set a new execution delay correctly', () => {})
 
-  it('should delay the execution of an evm call script correctly', () => {})
+  // it('should delay the execution of an evm call script correctly', () => {})
 
-  it('should pause the execution of a delayed script correctly', () => {})
+  // it('should pause the execution of a delayed script correctly', () => {})
 
-  it('should resume the execution of a delayed script correctly', () => {})
+  // it('should resume the execution of a delayed script correctly', () => {})
 
-  it('should cancel the execution of a delayed script correctly', () => {})
+  // it('should cancel the execution of a delayed script correctly', () => {})
 
-  it('should execute a delayed script correctly', () => {})
+  // it('should execute a delayed script correctly', () => {})
 
-  it('should execute a delayed script correctly', () => {})
+  // it('should execute a delayed script correctly', () => {})
 })

@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 type OperationType = 'query' | 'subscription'
 
-export const GET_DELAY_APP = (type: OperationType) => gql`
+export const GET_DELAY_APP = (type: OperationType): any => gql`
   ${type} Delay($id: String!) {
     delayApp(id: $id) {
       id
@@ -13,7 +13,7 @@ export const GET_DELAY_APP = (type: OperationType) => gql`
   }
 `
 
-export const GET_DELAY_SCRIPTS = (type: OperationType) => gql`
+export const GET_DELAY_SCRIPTS = (type: OperationType): any => gql`
   ${type} DelayScripts($appAddress: String, $first: Int!, $skip: Int!) {
     delayScripts(first: $first, skip: $skip, where: { delayApp_: { id: $appAddress }}) {
       executionTime

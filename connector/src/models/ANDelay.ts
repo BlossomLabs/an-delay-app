@@ -3,7 +3,7 @@ import { subscription } from '@1hive/connect-core'
 import {
   Address,
   DelayAppData,
-  IANDelayConnector,
+  ANDelayConnector,
   SubscriptionCallback,
 } from '../types'
 import { DelayScript } from './DelayScript'
@@ -15,9 +15,9 @@ type QueryOpts = {
 
 export class ANDelay {
   #app: App
-  #connector: IANDelayConnector
+  #connector: ANDelayConnector
 
-  constructor(app: App, connector: IANDelayConnector) {
+  constructor(app: App, connector: ANDelayConnector) {
     this.#app = app
     this.#connector = connector
   }
@@ -47,7 +47,7 @@ export class ANDelay {
   onDelayScripts(
     { first = 1000, skip = 0 }: Partial<QueryOpts> = {},
     callback?: SubscriptionCallback<DelayScript[]>
-  ) {
+  ): SubscriptionCallback<DelayScript[]> {
     return subscription<DelayScript[]>(callback, (callback) =>
       this.#connector.onDelayScripts(this.#app.address, first, skip, callback)
     )

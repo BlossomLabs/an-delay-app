@@ -1,11 +1,9 @@
 import { ErrorException } from '@1hive/connect-core'
 import { GraphQLWrapper, QueryResult } from '@1hive/connect-thegraph'
-import { ANDelay } from '../models/ANDelay'
 import { DelayScript } from '../models/DelayScript'
 import {
   DelayAppData,
-  DelayScriptData,
-  IANDelayConnector,
+  ANDelayConnector,
   SubscriptionCallback,
   SubscriptionHandler,
 } from '../types'
@@ -28,7 +26,7 @@ export const subgraphUrlFromChainId = (chainId: number): string | null => {
   }
 }
 
-export class ANDelayConnectorTheGraph implements IANDelayConnector {
+export class ANDelayConnectorTheGraph implements ANDelayConnector {
   #gql: GraphQLWrapper
 
   constructor(config: ANDelayConnectorTheGraphConfig) {
@@ -46,7 +44,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
     })
   }
 
-  async disconnect() {
+  disconnect(): void {
     this.#gql.close()
   }
 
@@ -54,7 +52,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
     return this.#gql.performQueryWithParser(
       GET_DELAY_APP('query'),
       { id: appAddress },
-      (result: QueryResult) => parseDelayApp(result, this)
+      (result: QueryResult) => parseDelayApp(result)
     )
   }
 
@@ -66,7 +64,7 @@ export class ANDelayConnectorTheGraph implements IANDelayConnector {
       GET_DELAY_APP('subscription'),
       { id: appAddress },
       callback,
-      (result: QueryResult) => parseDelayApp(result, this)
+      (result: QueryResult) => parseDelayApp(result)
     )
   }
 

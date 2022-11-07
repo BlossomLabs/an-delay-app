@@ -1,4 +1,3 @@
-import { ANDelay } from './models/ANDelay'
 import { DelayScript } from './models/DelayScript'
 
 export type Address = string
@@ -24,8 +23,8 @@ export interface DelayScriptData {
   pausedAt: string
 }
 
-export interface IANDelayConnector {
-  disconnect(): Promise<void>
+export interface ANDelayConnector {
+  disconnect(): void
   delayApp(appAddress: Address): Promise<DelayAppData>
   onDelayApp(
     appAddress: Address,
