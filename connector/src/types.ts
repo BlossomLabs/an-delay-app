@@ -1,5 +1,5 @@
 import { ANDelay } from './models/ANDelay'
-import { DelayScript } from './models/DelayScripts'
+import { DelayScript } from './models/DelayScript'
 
 export type Address = string
 

@@ -6,7 +6,7 @@ import {
   IANDelayConnector,
   SubscriptionCallback,
 } from '../types'
-import { DelayScript } from './DelayScripts'
+import { DelayScript } from './DelayScript'
 
 type QueryOpts = {
   first: number

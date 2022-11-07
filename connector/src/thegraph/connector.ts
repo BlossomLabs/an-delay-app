@@ -1,7 +1,7 @@
 import { ErrorException } from '@1hive/connect-core'
 import { GraphQLWrapper, QueryResult } from '@1hive/connect-thegraph'
 import { ANDelay } from '../models/ANDelay'
-import { DelayScript } from '../models/DelayScripts'
+import { DelayScript } from '../models/DelayScript'
 import {
   DelayAppData,
   DelayScriptData,

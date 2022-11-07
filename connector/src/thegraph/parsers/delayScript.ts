@@ -1,6 +1,6 @@
 import { ErrorException } from '@1hive/connect-core'
 import { QueryResult } from '@1hive/connect-thegraph'
-import { DelayScript } from '../../models/DelayScripts'
+import { DelayScript } from '../../models/DelayScript'
 
 export const parseDelayScripts = (result: QueryResult): DelayScript[] => {
   const delayScripts = result.data.delayScripts as any[]
