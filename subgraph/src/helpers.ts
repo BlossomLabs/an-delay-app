@@ -1,7 +1,7 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
   DelayApp as DelayAppEntity,
-  DelayScript as DelayScriptEntity,
+  DelayedScript as DelayedScriptEntity,
 } from "../generated/schema";
 import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
 
@@ -9,7 +9,7 @@ export const buildDelayAppEntityId = (appAddress: Address): string => {
   return appAddress.toHexString();
 };
 
-export const buildDelayScriptEntityId = (
+export const buildDelayedScriptEntityId = (
   appAddress: Address,
   scriptIndex: BigInt
 ): string => {
@@ -28,41 +28,41 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
   return delayApp;
 };
 
-export const getDelayScriptEntity = (
+export const getDelayedScriptEntity = (
   appAddress: Address,
   scriptIndex: BigInt
-): DelayScriptEntity => {
+): DelayedScriptEntity => {
   const delayApp = getDelayAppEntity(appAddress);
-  const delayScriptId = buildDelayScriptEntityId(
+  const delayedScriptId = buildDelayedScriptEntityId(
     Address.fromBytes(delayApp.appAddress),
     scriptIndex
   );
-  let delayScript = DelayScriptEntity.load(delayScriptId);
+  let delayedScript = DelayedScriptEntity.load(delayedScriptId);
 
-  if (!delayScript) {
-    delayScript = new DelayScriptEntity(delayScriptId);
-    delayScript.delayApp = delayApp.id;
+  if (!delayedScript) {
+    delayedScript = new DelayedScriptEntity(delayedScriptId);
+    delayedScript.delayApp = delayApp.id;
   }
 
-  return delayScript;
+  return delayedScript;
 };
 
-export const updateDelayScript = (
+export const updateDelayedScript = (
   appAddress: Address,
   scriptIndex: BigInt
 ): void => {
   const delayContract = DelayContract.bind(appAddress);
-  const delayScriptRes = delayContract.delayedScripts(scriptIndex);
+  const delayedScriptRes = delayContract.delayedScripts(scriptIndex);
 
-  if (delayScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
+  if (delayedScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
     return;
   }
 
-  const delayScript = getDelayScriptEntity(appAddress, scriptIndex);
+  const delayedScript = getDelayedScriptEntity(appAddress, scriptIndex);
 
-  delayScript.evmCallScript = delayScriptRes.getEvmCallScript();
-  delayScript.executionTime = delayScriptRes.getExecutionTime();
-  delayScript.pausedAt = delayScriptRes.getPausedAt();
+  delayedScript.evmCallScript = delayedScriptRes.getEvmCallScript();
+  delayedScript.executionTime = delayedScriptRes.getExecutionTime();
+  delayedScript.pausedAt = delayedScriptRes.getPausedAt();
 
-  delayScript.save();
+  delayedScript.save();
 };

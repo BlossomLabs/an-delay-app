@@ -1,2 +1,2 @@
 export * from './delayApp'
-export * from './delayScript'
+export * from './delayedScript'

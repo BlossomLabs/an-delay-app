@@ -1,4 +1,4 @@
-import { DelayScript } from './models/DelayScript'
+import { DelayedScript } from './models/DelayedScript'
 
 export type Address = string
 
@@ -16,7 +16,7 @@ export interface DelayAppData {
   executionDelay: string
 }
 
-export interface DelayScriptData {
+export interface DelayedScriptData {
   id: string
   evmCallScript: string
   executionTime: string
@@ -30,15 +30,15 @@ export interface ANDelayConnector {
     appAddress: Address,
     callback: SubscriptionCallback<DelayAppData>
   ): SubscriptionHandler
-  delayScripts(
+  delayedScripts(
     appAddress: Address,
     first: number,
     skip: number
-  ): Promise<DelayScript[]>
-  onDelayScripts(
+  ): Promise<DelayedScript[]>
+  onDelayedScripts(
     appAddress: Address,
     first: number,
     skip: number,
-    callback: SubscriptionCallback<DelayScript[]>
+    callback: SubscriptionCallback<DelayedScript[]>
   ): SubscriptionHandler
 }

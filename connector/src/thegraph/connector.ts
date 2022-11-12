@@ -1,15 +1,15 @@
 import { ErrorException } from '@1hive/connect-core'
 import { GraphQLWrapper, QueryResult } from '@1hive/connect-thegraph'
-import { DelayScript } from '../models/DelayScript'
+import { DelayedScript } from '../models/DelayedScript'
 import {
   DelayAppData,
   ANDelayConnector,
   SubscriptionCallback,
   SubscriptionHandler,
 } from '../types'
-import { parseDelayScripts } from './parsers'
+import { parseDelayedScripts } from './parsers'
 import { parseDelayApp } from './parsers/delayApp'
-import { GET_DELAY_APP, GET_DELAY_SCRIPTS } from './queries'
+import { GET_DELAY_APP, GET_DELAYED_SCRIPTS } from './queries'
 
 type ANDelayConnectorTheGraphConfig = {
   pollInterval?: number
@@ -68,37 +68,37 @@ export class ANDelayConnectorTheGraph implements ANDelayConnector {
     )
   }
 
-  delayScripts(
+  delayedScripts(
     appAddress: string,
     first: number,
     skip: number
-  ): Promise<DelayScript[]> {
+  ): Promise<DelayedScript[]> {
     return this.#gql.performQueryWithParser(
-      GET_DELAY_SCRIPTS('query'),
+      GET_DELAYED_SCRIPTS('query'),
       {
         appAddress,
         first,
         skip,
       },
-      (result: QueryResult) => parseDelayScripts(result)
+      (result: QueryResult) => parseDelayedScripts(result)
     )
   }
 
-  onDelayScripts(
+  onDelayedScripts(
     appAddress: string,
     first: number,
     skip: number,
-    callback: SubscriptionCallback<DelayScript[]>
+    callback: SubscriptionCallback<DelayedScript[]>
   ): SubscriptionHandler {
     return this.#gql.subscribeToQueryWithParser(
-      GET_DELAY_SCRIPTS('subscription'),
+      GET_DELAYED_SCRIPTS('subscription'),
       {
         appAddress,
         first,
         skip,
       },
       callback,
-      (result: QueryResult) => parseDelayScripts(result)
+      (result: QueryResult) => parseDelayedScripts(result)
     )
   }
 }

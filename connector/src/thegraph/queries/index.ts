@@ -13,9 +13,9 @@ export const GET_DELAY_APP = (type: OperationType): any => gql`
   }
 `
 
-export const GET_DELAY_SCRIPTS = (type: OperationType): any => gql`
-  ${type} DelayScripts($appAddress: String, $first: Int!, $skip: Int!) {
-    delayScripts(first: $first, skip: $skip, where: { delayApp_: { id: $appAddress }}) {
+export const GET_DELAYED_SCRIPTS = (type: OperationType): any => gql`
+  ${type} DelayedScripts($appAddress: String, $first: Int!, $skip: Int!) {
+    delayedScripts(first: $first, skip: $skip, where: { delayApp_: { id: $appAddress }}) {
       executionTime
       pausedAt
       evmCallScript

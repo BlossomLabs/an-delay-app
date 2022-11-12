@@ -1,11 +1,11 @@
-import { DelayScriptData } from "../types"
+import { DelayedScriptData } from "../types"
 
-export class DelayScript {
+export class DelayedScript {
   readonly executionTime: string
   readonly pausedAt: string
   readonly evmCallScript: string
 
-  constructor(data: DelayScriptData) {
+  constructor(data: DelayedScriptData) {
     this.executionTime = data.executionTime
     this.pausedAt = data.pausedAt
     this.evmCallScript = data.evmCallScript

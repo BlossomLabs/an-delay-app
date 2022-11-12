@@ -1,6 +1,5 @@
 import { store } from "@graphprotocol/graph-ts";
 import {
-  Delay as DelayContract,
   DelayedScriptStored as DelayedScriptStoredEvent,
   ExecutedScript as ExecutedScriptEvent,
   ExecutionCancelled as ExecutionCancelledEvent,
@@ -9,16 +8,14 @@ import {
   ExecutionResumed as ExecutionResumedEvent,
 } from "../generated/templates/Delay/Delay";
 import {
-  buildDelayScriptEntityId,
+  buildDelayedScriptEntityId,
   getDelayAppEntity,
-  updateDelayScript,
+  updateDelayedScript,
 } from "./helpers";
 
-export function handleDelayedScriptStored(
-  e: DelayedScriptStoredEvent
-): void {
-  updateDelayScript(e.address, e.params.scriptId);
-};
+export function handleDelayedScriptStored(e: DelayedScriptStoredEvent): void {
+  updateDelayedScript(e.address, e.params.scriptId);
+}
 
 export function handleExecutionDelaySet(e: ExecutionDelaySetEvent): void {
   const delayApp = getDelayAppEntity(e.address);
@@ -30,22 +27,22 @@ export function handleExecutionDelaySet(e: ExecutionDelaySetEvent): void {
 
 export function handleExecutedScript(e: ExecutedScriptEvent): void {
   store.remove(
-    "DelayScript",
-    buildDelayScriptEntityId(e.address, e.params.scriptId)
+    "DelayedScript",
+    buildDelayedScriptEntityId(e.address, e.params.scriptId)
   );
 }
 
 export function handleExecutionPaused(e: ExecutionPausedEvent): void {
-  updateDelayScript(e.address, e.params.scriptId);
+  updateDelayedScript(e.address, e.params.scriptId);
 }
 
 export function handleExecutionResumed(e: ExecutionResumedEvent): void {
-  updateDelayScript(e.address, e.params.scriptId);
+  updateDelayedScript(e.address, e.params.scriptId);
 }
 
 export function handleExecutionCancelled(e: ExecutionCancelledEvent): void {
   store.remove(
-    "DelayScript",
-    buildDelayScriptEntityId(e.address, e.params.scriptId)
+    "DelayedScript",
+    buildDelayedScriptEntityId(e.address, e.params.scriptId)
   );
 }

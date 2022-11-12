@@ -6,7 +6,7 @@ import {
   ANDelayConnector,
   SubscriptionCallback,
 } from '../types'
-import { DelayScript } from './DelayScript'
+import { DelayedScript } from './DelayedScript'
 
 type QueryOpts = {
   first: number
@@ -38,18 +38,18 @@ export class ANDelay {
     )
   }
 
-  delayScripts({ first = 1000, skip = 0 }: Partial<QueryOpts> = {}): Promise<
-    DelayScript[]
+  delayedScripts({ first = 1000, skip = 0 }: Partial<QueryOpts> = {}): Promise<
+    DelayedScript[]
   > {
-    return this.#connector.delayScripts(this.#app.address, first, skip)
+    return this.#connector.delayedScripts(this.#app.address, first, skip)
   }
 
-  onDelayScripts(
+  onDelayedScripts(
     { first = 1000, skip = 0 }: Partial<QueryOpts> = {},
-    callback?: SubscriptionCallback<DelayScript[]>
-  ): SubscriptionCallback<DelayScript[]> {
-    return subscription<DelayScript[]>(callback, (callback) =>
-      this.#connector.onDelayScripts(this.#app.address, first, skip, callback)
+    callback?: SubscriptionCallback<DelayedScript[]>
+  ): SubscriptionCallback<DelayedScript[]> {
+    return subscription<DelayedScript[]>(callback, (callback) =>
+      this.#connector.onDelayedScripts(this.#app.address, first, skip, callback)
     )
   }
 
