@@ -23,8 +23,8 @@
   ],
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
-    "build:esm": "tsc --build",
-    "build:cjs": "tsc --build ./tsconfig.cjs.json",
+    "build:esm": "tsc --build ./tsconfig.build.json",
+    "build:cjs": "tsc --build ./tsconfig.cjs.build.json",
     "hardhat:dev": "yarn hardhat node --config .config/hardhat.config.js",
     "dev:esm": "yarn build:esm --watch",
     "dev:cjs": "yarn build:cjs --watch",
