@@ -1,6 +1,7 @@
 {
   "name": "@blossom-labs/subgraph-an-delay-app",
   "version": "0.0.2",
+  "private": true,
   "scripts": {
     "codegen": "rm -rf generated; graph codegen",
     "build": "rm -rf build; graph build",

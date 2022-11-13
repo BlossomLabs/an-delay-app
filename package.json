@@ -3,31 +3,35 @@
   "version": "1.1.0",
   "description": "",
   "dependencies": {
-    "@aragon/os": "^4.2.1",
     "@aragon/apps-shared-minime": "^1.0.1",
     "@aragon/apps-token-manager": "2.1.0",
-    "@aragon/apps-voting": "2.1.0"
+    "@aragon/apps-voting": "2.1.0",
+    "@aragon/os": "^4.2.1"
   },
   "devDependencies": {
     "@aragon/buidler-aragon": "^0.2.7",
     "@aragon/contract-test-helpers": "0.0.1",
+    "@changesets/cli": "^2.25.2",
     "@nomiclabs/buidler": "^1.0.2",
     "@nomiclabs/buidler-etherscan": "^1.2.0",
     "@nomiclabs/buidler-solhint": "^1.2.0",
     "@nomiclabs/buidler-truffle5": "^1.1.2",
     "@nomiclabs/buidler-web3": "^1.1.2",
     "buidler-gas-reporter": "^0.1.3",
+    "eth-ens-namehash": "^2.0.8",
     "solidity-coverage": "^0.7.0-beta.3",
-    "web3": "^1.2.6",
-    "eth-ens-namehash": "^2.0.8"
+    "web3": "^1.2.6"
   },
   "scripts": {
-    "postinstall": "npm run compile",
     "start": "buidler start",
+    "changeset:release": "yarn build:connector && changeset publish",
+    "changeset:version": "changeset version",
     "console": "buidler console",
     "compile": "buidler compile --force",
     "devchain": "buidler node",
-    "build": "cd app && npm run build",
+    "build": "yarn build:connector && yarn build:frontend",
+    "build:connector": "cd connector && yarn build",
+    "build:frontend": "cd app && yarn build",
     "lint": "buidler check && echo 'Lint complete.'",
     "test": "buidler test --network buidlerevm",
     "test:gas": "GAS_REPORTER=true npm run test",
