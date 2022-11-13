@@ -18,9 +18,12 @@ export interface DelayAppData {
 
 export interface DelayedScriptData {
   id: string
+  creator: string
   evmCallScript: string
   executionTime: string
   pausedAt: string
+  timeSubmitted: string
+  totalTimePaused: string
 }
 
 export interface ANDelayConnector {

@@ -16,9 +16,12 @@ export const GET_DELAY_APP = (type: OperationType): any => gql`
 export const GET_DELAYED_SCRIPTS = (type: OperationType): any => gql`
   ${type} DelayedScripts($appAddress: String, $first: Int!, $skip: Int!) {
     delayedScripts(first: $first, skip: $skip, where: { delayApp_: { id: $appAddress }}) {
+      creator
+      evmCallScript
       executionTime
       pausedAt
-      evmCallScript
+      timeSubmitted
+      totalTimePaused
     }
   }
 `
