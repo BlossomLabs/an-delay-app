@@ -8,9 +8,12 @@ type DelayApp @entity {
 
 type DelayedScript @entity {
   id: ID!
+  creator: Bytes!
+  evmCallScript: Bytes!
   executionTime: BigInt!
   pausedAt: BigInt!
-  evmCallScript: Bytes!
+  timeSubmitted: BigInt!
+  totalTimePaused: BigInt!
   delayApp: DelayApp!
 }
 

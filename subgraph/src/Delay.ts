@@ -10,11 +10,19 @@ import {
 import {
   buildDelayedScriptEntityId,
   getDelayAppEntity,
+  getDelayedScriptEntity,
   updateDelayedScript,
 } from "./helpers";
 
 export function handleDelayedScriptStored(e: DelayedScriptStoredEvent): void {
   updateDelayedScript(e.address, e.params.scriptId);
+
+  const delayedScript = getDelayedScriptEntity(e.address, e.params.scriptId);
+
+  delayedScript.creator = e.transaction.from;
+  delayedScript.timeSubmitted = e.block.timestamp;
+
+  delayedScript.save();
 }
 
 export function handleExecutionDelaySet(e: ExecutionDelaySetEvent): void {

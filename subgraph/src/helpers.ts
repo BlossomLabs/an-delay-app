@@ -1,4 +1,4 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
   DelayApp as DelayAppEntity,
   DelayedScript as DelayedScriptEntity,
@@ -23,6 +23,8 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
   if (!delayApp) {
     delayApp = new DelayAppEntity(delayAppId);
     delayApp.appAddress = appAddress;
+    delayApp.executionDelay = BigInt.fromI32(0);
+    delayApp.orgAddress = Bytes.fromHexString("0x");
   }
 
   return delayApp;
@@ -42,6 +44,12 @@ export const getDelayedScriptEntity = (
   if (!delayedScript) {
     delayedScript = new DelayedScriptEntity(delayedScriptId);
     delayedScript.delayApp = delayApp.id;
+    delayedScript.creator = Bytes.fromHexString("0x");
+    delayedScript.evmCallScript = Bytes.fromHexString("0x");
+    delayedScript.executionTime = BigInt.fromI32(0);
+    delayedScript.pausedAt = BigInt.fromI32(0);
+    delayedScript.timeSubmitted = BigInt.fromI32(0);
+    delayedScript.totalTimePaused = BigInt.fromI32(0);
   }
 
   return delayedScript;
@@ -60,9 +68,18 @@ export const updateDelayedScript = (
 
   const delayedScript = getDelayedScriptEntity(appAddress, scriptIndex);
 
+  const newExecutionTime = delayedScriptRes.getExecutionTime();
+  const oldExecutionTime = delayedScript.executionTime.equals(BigInt.fromI32(0))
+    ? newExecutionTime
+    : delayedScript.executionTime;
+  const timePaused = newExecutionTime.minus(oldExecutionTime);
+
   delayedScript.evmCallScript = delayedScriptRes.getEvmCallScript();
-  delayedScript.executionTime = delayedScriptRes.getExecutionTime();
+  delayedScript.executionTime = newExecutionTime;
   delayedScript.pausedAt = delayedScriptRes.getPausedAt();
+  delayedScript.totalTimePaused = delayedScript.totalTimePaused.plus(
+    timePaused
+  );
 
   delayedScript.save();
 };
