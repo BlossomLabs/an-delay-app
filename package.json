@@ -1,43 +1,18 @@
 {
-  "name": "@1hive/apps-delay",
-  "version": "1.1.0",
-  "description": "",
-  "dependencies": {
-    "@aragon/apps-shared-minime": "^1.0.1",
-    "@aragon/apps-token-manager": "2.1.0",
-    "@aragon/apps-voting": "2.1.0",
-    "@aragon/os": "^4.2.1"
-  },
+  "name": "an-delay-monorepo",
+  "private": true,
+  "version": "0.0.1",
   "devDependencies": {
-    "@aragon/buidler-aragon": "^0.2.7",
-    "@aragon/contract-test-helpers": "0.0.1",
-    "@changesets/cli": "^2.25.2",
-    "@nomiclabs/buidler": "^1.0.2",
-    "@nomiclabs/buidler-etherscan": "^1.2.0",
-    "@nomiclabs/buidler-solhint": "^1.2.0",
-    "@nomiclabs/buidler-truffle5": "^1.1.2",
-    "@nomiclabs/buidler-web3": "^1.1.2",
-    "buidler-gas-reporter": "^0.1.3",
-    "eth-ens-namehash": "^2.0.8",
-    "solidity-coverage": "^0.7.0-beta.3",
-    "web3": "^1.2.6"
+    "@changesets/cli": "^2.25.2"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "buidler start",
-    "changeset:release": "yarn build:connector && changeset publish",
+    "changeset:release": "yarn build && changeset publish",
     "changeset:version": "changeset version",
-    "console": "buidler console",
-    "compile": "buidler compile --force",
-    "devchain": "buidler node",
-    "build": "yarn build:connector && yarn build:frontend",
-    "build:connector": "cd connector && yarn build",
-    "build:frontend": "cd app && yarn build",
-    "lint": "buidler check && echo 'Lint complete.'",
-    "test": "buidler test --network buidlerevm",
-    "test:gas": "GAS_REPORTER=true npm run test",
-    "coverage": "SOLIDITY_COVERAGE=true npm run test",
-    "apm:publish:major": "buidler publish major",
-    "apm:publish:minor": "buidler publish minor",
-    "apm:publish:patch": "buidler publish patch"
+    "build": "yarn build:connector && yarn build:an-delay-app",
+    "build:connector": "cd packages/connector && yarn build",
+    "build:an-delay-app": "cd packages/an-delay-app && yarn build"
   }
 }

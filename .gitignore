@@ -7,13 +7,13 @@ node_modules
 /coverage
 
 # production
-/build
-/dist
+build
+dist
 
 package-lock.json
 yarn.lock
 .DS_Store
 
-/artifacts
-/cache
-app/.cache
+packages/an-delay-app/artifacts
+cache
+.cache
