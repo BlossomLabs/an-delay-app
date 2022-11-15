@@ -43,6 +43,7 @@ export const getDelayedScriptEntity = (
 
   if (!delayedScript) {
     delayedScript = new DelayedScriptEntity(delayedScriptId);
+    delayedScript.index = scriptIndex;
     delayedScript.delayApp = delayApp.id;
     delayedScript.creator = Bytes.fromHexString("0x");
     delayedScript.evmCallScript = Bytes.fromHexString("0x");
@@ -77,9 +78,8 @@ export const updateDelayedScript = (
   delayedScript.evmCallScript = delayedScriptRes.getEvmCallScript();
   delayedScript.executionTime = newExecutionTime;
   delayedScript.pausedAt = delayedScriptRes.getPausedAt();
-  delayedScript.totalTimePaused = delayedScript.totalTimePaused.plus(
-    timePaused
-  );
+  delayedScript.totalTimePaused =
+    delayedScript.totalTimePaused.plus(timePaused);
 
   delayedScript.save();
 };

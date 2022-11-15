@@ -8,6 +8,7 @@ type DelayApp @entity {
 
 type DelayedScript @entity {
   id: ID!
+  index: BigInt!
   creator: Bytes!
   evmCallScript: Bytes!
   executionTime: BigInt!
