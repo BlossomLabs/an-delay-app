@@ -7,9 +7,13 @@ import {
   SubscriptionCallback,
   SubscriptionHandler,
 } from '../types'
-import { parseDelayedScripts } from './parsers'
+import { parseDelayedScript, parseDelayedScripts } from './parsers'
 import { parseDelayApp } from './parsers/delayApp'
-import { GET_DELAY_APP, GET_DELAYED_SCRIPTS } from './queries'
+import {
+  GET_DELAY_APP,
+  GET_DELAYED_SCRIPTS,
+  GET_DELAYED_SCRIPT,
+} from './queries'
 
 type ANDelayConnectorTheGraphConfig = {
   pollInterval?: number
@@ -68,6 +72,32 @@ export class ANDelayConnectorTheGraph implements ANDelayConnector {
     )
   }
 
+  delayedScript(
+    appAddress: string,
+    scriptId: string | number
+  ): Promise<DelayedScript> {
+    return this.#gql.performQueryWithParser(
+      GET_DELAYED_SCRIPT('query'),
+      {
+        id: this.#buildDelayedScriptId(appAddress, scriptId),
+      },
+      (result) => parseDelayedScript(result)
+    )
+  }
+
+  onDelayedScript(
+    appAddress: string,
+    scriptId: string | number,
+    callback: SubscriptionCallback<DelayedScript>
+  ): SubscriptionHandler {
+    return this.#gql.subscribeToQueryWithParser(
+      GET_DELAYED_SCRIPT('subscription'),
+      { id: this.#buildDelayedScriptId(appAddress, scriptId) },
+      callback,
+      (result: QueryResult) => parseDelayedScript(result)
+    )
+  }
+
   delayedScripts(
     appAddress: string,
     first: number,
@@ -100,5 +130,9 @@ export class ANDelayConnectorTheGraph implements ANDelayConnector {
       callback,
       (result: QueryResult) => parseDelayedScripts(result)
     )
+  }
+
+  #buildDelayedScriptId(appAddress: string, scriptId: string | number): string {
+    return `${appAddress}-${scriptId}`
   }
 }

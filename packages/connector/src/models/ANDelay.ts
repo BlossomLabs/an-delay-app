@@ -1,11 +1,6 @@
-import type { App, ForwardingPath } from '@1hive/connect-core'
+import type { App } from '@1hive/connect-core'
 import { subscription } from '@1hive/connect-core'
-import {
-  Address,
-  DelayAppData,
-  ANDelayConnector,
-  SubscriptionCallback,
-} from '../types'
+import { DelayAppData, ANDelayConnector, SubscriptionCallback } from '../types'
 import { DelayedScript } from './DelayedScript'
 
 type QueryOpts = {
@@ -13,6 +8,8 @@ type QueryOpts = {
   skip: number
 }
 
+const DEFAULT_FIRST = 1000
+const DEFAULT_SKIP = 0
 export class ANDelay {
   #app: App
   #connector: ANDelayConnector
@@ -20,6 +17,10 @@ export class ANDelay {
   constructor(app: App, connector: ANDelayConnector) {
     this.#app = app
     this.#connector = connector
+  }
+
+  get app(): App {
+    return this.#app
   }
 
   async disconnect(): Promise<void> {
@@ -38,90 +39,32 @@ export class ANDelay {
     )
   }
 
-  delayedScripts({ first = 1000, skip = 0 }: Partial<QueryOpts> = {}): Promise<
-    DelayedScript[]
-  > {
+  delayedScript(scriptId: string | number): Promise<DelayedScript> {
+    return this.#connector.delayedScript(this.#app.address, scriptId)
+  }
+
+  onDelayedScript(
+    scriptId: string | number,
+    callback?: SubscriptionCallback<DelayedScript>
+  ): SubscriptionCallback<DelayedScript> {
+    return subscription<DelayedScript>(callback, (callback) =>
+      this.#connector.onDelayedScript(this.#app.address, scriptId, callback)
+    )
+  }
+
+  delayedScripts({
+    first = DEFAULT_FIRST,
+    skip = DEFAULT_SKIP,
+  }: Partial<QueryOpts> = {}): Promise<DelayedScript[]> {
     return this.#connector.delayedScripts(this.#app.address, first, skip)
   }
 
   onDelayedScripts(
-    { first = 1000, skip = 0 }: Partial<QueryOpts> = {},
+    { first = DEFAULT_FIRST, skip = DEFAULT_SKIP }: Partial<QueryOpts> = {},
     callback?: SubscriptionCallback<DelayedScript[]>
   ): SubscriptionCallback<DelayedScript[]> {
     return subscription<DelayedScript[]>(callback, (callback) =>
       this.#connector.onDelayedScripts(this.#app.address, first, skip, callback)
     )
-  }
-
-  async setExecutionDelay(
-    executionDelay: number,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent(
-      'setExecutionDelay',
-      [executionDelay],
-      { actAs: signerAddress }
-    )
-
-    return intent
-  }
-
-  async delayExecution(
-    evmCallScript: string,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent('delayExecution', [evmCallScript], {
-      actAs: signerAddress,
-    })
-
-    return intent
-  }
-
-  async pauseExecution(
-    delayedScriptId: number,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent('pauseExecution', [delayedScriptId], {
-      actAs: signerAddress,
-    })
-
-    return intent
-  }
-
-  async resumeExecution(
-    delayedScriptId: number,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent(
-      'resumeExecution',
-      [delayedScriptId],
-      { actAs: signerAddress }
-    )
-
-    return intent
-  }
-
-  async cancelExecution(
-    delayedScriptId: number,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent(
-      'cancelExecution',
-      [delayedScriptId],
-      { actAs: signerAddress }
-    )
-
-    return intent
-  }
-
-  async execute(
-    delayedScriptId: number,
-    signerAddress: Address
-  ): Promise<ForwardingPath> {
-    const intent = await this.#app.intent('execute', [delayedScriptId], {
-      actAs: signerAddress,
-    })
-
-    return intent
   }
 }

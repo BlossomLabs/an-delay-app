@@ -18,6 +18,7 @@ export interface DelayAppData {
 
 export interface DelayedScriptData {
   id: string
+  index: string
   creator: string
   evmCallScript: string
   executionTime: string
@@ -32,6 +33,15 @@ export interface ANDelayConnector {
   onDelayApp(
     appAddress: Address,
     callback: SubscriptionCallback<DelayAppData>
+  ): SubscriptionHandler
+  delayedScript(
+    appAddress: Address,
+    scriptId: string | number,
+  ): Promise<DelayedScript>
+  onDelayedScript(
+    appAddress: Address,
+    scriptId: string | number,
+    callback: SubscriptionCallback<DelayedScript>
   ): SubscriptionHandler
   delayedScripts(
     appAddress: Address,
