@@ -1,5 +1,12 @@
 # @blossom-labs/connect-an-delay
 
+## 0.2.0
+
+### Minor Changes
+
+- - Expose delayed script's `id` field.
+  - Support query for fetching a single delayed script.
+
 ## 0.1.1
 
 ### Patch Changes
