@@ -1,5 +1,5 @@
 {
-  "appName": "delay.aragonpm.eth",
+  "appName": "an-delay.aragonpm.eth",
   "path": "contracts/Delay.sol",
   "roles": [
     {
@@ -26,6 +26,16 @@
       "name": "Cancel the script execution",
       "id": "CANCEL_EXECUTION_ROLE",
       "params": []
+    },
+    {
+      "name": "Change fees destination address",
+      "id": "CHANGE_DESTINATION_ROLE",
+      "params": ["New address", "Current address"]
+    },
+    {
+      "name": "Change fee amount",
+      "id": "CHANGE_AMOUNT_ROLE",
+      "params": ["New amount", "Current amount"]
     }
   ],
   "environments": {
@@ -46,6 +56,12 @@
       "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
       "wsRPC": "wss://mainnet.eth.aragon.network/ws",
       "network": "mainnet"
+    },
+    "xdai": {
+      "registry": "0xaafca6b0c89521752e559650206d7c925fd0e530",
+      "appName": "an-delay.open.aragonpm.eth",
+      "network": "xdai",
+      "wsRPC": "wss://rpc.gnosischain.com/wss"
     }
   }
 }
