@@ -30,13 +30,14 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     string private constant ERROR_INVALID_FEE_AMOUNT = "DELAY_INVALID_FEE_AMOUNT";
     string private constant ERROR_INVALID_FEE_DESTINATION = "DELAY_INVALID_FEE_DESTINATION";
     string private constant ERROR_FEE_TRANSFER_REVERTED = "DELAY_FEE_TRANSFER_REVERTED";
+    string private constant ERROR_INVALID_EXECUTION_SCRIPT = "DELAY_INVALID_EXECUTION_SCRIPT";
 
     struct DelayedScript {
         uint64 executionTime;
         uint64 pausedAt;
         address sender;
+        bytes32 evmCallScriptHash;
         uint256 feeAmount;
-        bytes evmCallScript;
     }
 
     uint64 public executionDelay;
@@ -46,7 +47,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     uint256 public feeAmount;
     address public feeDestination;
 
-    event DelayedScriptStored(uint256 scriptId);
+    event DelayedScriptStored(uint256 scriptId, bytes evmCallScript);
     event ExecutionDelaySet(uint64 executionDelay);
     event ExecutedScript(uint256 scriptId);
     event ExecutionPaused(uint256 scriptId);
@@ -181,18 +182,20 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     * @notice Execute the script with ID `_delayedScriptId`
     * @param _delayedScriptId The ID of the script to execute
     */
-    function execute(uint256 _delayedScriptId) external {
+    function execute(uint256 _delayedScriptId, bytes _evmCallScript) external {
         require(canExecute(_delayedScriptId), ERROR_CAN_NOT_EXECUTE);
 
         DelayedScript memory delayedScript = delayedScripts[_delayedScriptId];
         delete delayedScripts[_delayedScriptId];
+
+        require(delayedScript.evmCallScriptHash == keccak256(_evmCallScript), ERROR_INVALID_EXECUTION_SCRIPT);
 
         // Don't do an unnecessary transfer if there was no fee
         if (delayedScript.feeAmount > 0) {
           feeToken.transfer(delayedScript.sender, delayedScript.feeAmount);
         }
 
-        runScript(delayedScript.evmCallScript, new bytes(0), new address[](0));
+        runScript(_evmCallScript, new bytes(0), new address[](0));
         emit ExecutedScript(_delayedScriptId);
     }
 
@@ -234,9 +237,9 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         uint256 delayedScriptIndex = delayedScriptsNewIndex;
         delayedScriptsNewIndex++;
 
-        delayedScripts[delayedScriptIndex] = DelayedScript(getTimestamp64().add(executionDelay), 0, msg.sender, feeAmount, _evmCallScript);
+        delayedScripts[delayedScriptIndex] = DelayedScript(getTimestamp64().add(executionDelay), 0, msg.sender, keccak256(_evmCallScript), feeAmount);
 
-        emit DelayedScriptStored(delayedScriptIndex);
+        emit DelayedScriptStored(delayedScriptIndex, _evmCallScript);
 
         return delayedScriptIndex;
     }

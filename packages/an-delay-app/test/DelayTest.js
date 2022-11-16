@@ -6,11 +6,9 @@ const { hash: nameHash } = require('eth-ens-namehash')
 
 const { timeTravel } = require('./helpers/helpers')
 
-
 const { ZERO_ADDRESS, bigExp, getEventArgument, bn } = require('@1hive/contract-helpers-test/src')
 const { assertRevert, assertEvent } = require('@1hive/contract-helpers-test/src/asserts')
 const { newDao, installNewApp, encodeCallScript } = require('@1hive/contract-helpers-test/src/aragon-os')
-
 
 contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
   let delayBase, delay
@@ -222,11 +220,11 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             const { timestamp } = await web3.eth.getBlock('latest')
             const expectedExecutionTime = timestamp + INITIAL_DELAY
 
-            const { executionTime: actualExecutionTime, evmCallScript: actualCallScript } = await delay.delayedScripts(0)
+            const { executionTime: actualExecutionTime, evmCallScriptHash: actualCallScriptHash } = await delay.delayedScripts(0)
             const actualNewScriptIndex = await delay.delayedScriptsNewIndex()
 
             assert.closeTo(actualExecutionTime.toNumber(), expectedExecutionTime, 3)
-            assert.equal(actualCallScript, script)
+            assert.equal(actualCallScriptHash, web3.utils.keccak256(script))
             assert.equal(actualNewScriptIndex, 1)
           })
 
@@ -249,7 +247,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             it('executes the script after the delay has elapsed and deletes script', async () => {
               await timeTravel(web3)(INITIAL_DELAY + 3)
 
-              await delay.execute(0)
+              await delay.execute(0, script)
               const actualExecutionCounter = await executionTarget.counter()
               const {
                 executionTime: actualExecutionTime,
@@ -269,7 +267,8 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             const delayPreviousBalance = await feeToken.balanceOf(delay.address)
             
             await timeTravel(web3)(INITIAL_DELAY + 3)
-            await delay.execute(0)
+
+            await delay.execute(0, script)
 
             const userCurrentBalance = await feeToken.balanceOf(from)
             const delayCurrentBalance = await feeToken.balanceOf(delay.address)
@@ -286,7 +285,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             await delay.changeFeeAmount(0, { from })
             
             await timeTravel(web3)(INITIAL_DELAY + 3)
-            await delay.execute(0)
+            await delay.execute(0, script)
 
             const userCurrentBalance = await feeToken.balanceOf(from)
             const delayCurrentBalance = await feeToken.balanceOf(delay.address)
@@ -317,7 +316,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             await assertRevert(delay.forward(script), 'DELAY_FEE_TRANSFER_REVERTED')
           })
         })
-        it('stores delayed execution script and updates new script index when permission granted', async () => {
+        it('stores delayed execution script hash and updates new script index when permission granted', async () => {
           await feeToken.approve(delay.address, FEE_AMOUNT)
           await delay.forward(script)
           const { timestamp } = await web3.eth.getBlock('latest')
@@ -325,12 +324,12 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
           const {
             executionTime: actualExecutionTime,
             pausedAt: actualPausedAt,
-            evmCallScript: actualCallScript,
+            evmCallScriptHash: actualCallScriptHash,
           } = await delay.delayedScripts(0)
           const actualNewScriptIndex = await delay.delayedScriptsNewIndex()
 
           assert.closeTo(actualExecutionTime.toNumber(), expectedExecutionTime, 3)
-          assert.equal(actualCallScript, script)
+          assert.equal(actualCallScriptHash, web3.utils.keccak256(script))
           assert.equal(actualPausedAt, 0)
           assert.equal(actualNewScriptIndex, 1)
         })
@@ -458,7 +457,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
           it('executes the script after the delay has elapsed and deletes script', async () => {
             await timeTravel(web3)(INITIAL_DELAY + 3)
 
-            await delay.execute(0)
+            await delay.execute(0, script)
             const actualExecutionCounter = await executionTarget.counter()
             const {
               executionTime: actualExecutionTime,
@@ -476,35 +475,35 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             await delay.resumeExecution(0)
 
             await timeTravel(web3)(INITIAL_DELAY + 3)
-            await delay.execute(0)
+            await delay.execute(0, script)
           })
 
           it('reverts when script does not exist', async () => {
-            await assertRevert(delay.execute(1), 'DELAY_NO_SCRIPT')
+            await assertRevert(delay.execute(1, script), 'DELAY_NO_SCRIPT')
           })
 
           it('reverts when executing script before execution time', async () => {
-            await assertRevert(delay.execute(0), 'DELAY_CAN_NOT_EXECUTE')
+            await assertRevert(delay.execute(0, script), 'DELAY_CAN_NOT_EXECUTE')
           })
 
           it('reverts when executing paused script', async () => {
             await delay.pauseExecution(0)
 
             await timeTravel(web3)(INITIAL_DELAY + 3)
-            await assertRevert(delay.execute(0), 'DELAY_CAN_NOT_EXECUTE')
+            await assertRevert(delay.execute(0, script), 'DELAY_CAN_NOT_EXECUTE')
           })
 
           it('reverts when executing cancelled script', async () => {
             await timeTravel(web3)(INITIAL_DELAY + 3)
             await delay.cancelExecution(0)
 
-            await assertRevert(delay.execute(0), 'DELAY_NO_SCRIPT')
+            await assertRevert(delay.execute(0, script), 'DELAY_NO_SCRIPT')
           })
 
           it('reverts when evmScript reenters delay contract, attempting to execute same script twice', async () => {
             const action = {
               to: delay.address,
-              calldata: delay.contract.methods.execute(1).encodeABI(),
+              calldata: delay.contract.methods.execute(1, script).encodeABI(),
             }
 
             const reenteringScript = encodeCallScript([action])
@@ -514,7 +513,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
 
             await timeTravel(web3)(INITIAL_DELAY + 3)
             await feeToken.approve(delay.address, FEE_AMOUNT)
-            await assertRevert(delay.execute(scriptId), 'DELAY_NO_SCRIPT')
+            await assertRevert(delay.execute(scriptId, reenteringScript), 'DELAY_NO_SCRIPT')
           })
         })
       })
