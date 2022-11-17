@@ -12,7 +12,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     using SafeMath64 for uint64;
     using SafeERC20 for ERC20;
 
-    bytes32 public constant SET_DELAY_ROLE = keccak256("SET_DELAY_ROLE");
+    bytes32 public constant CHANGE_DELAY_ROLE = keccak256("CHANGE_DELAY_ROLE");
     bytes32 public constant DELAY_EXECUTION_ROLE = keccak256("DELAY_EXECUTION_ROLE");
     bytes32 public constant PAUSE_EXECUTION_ROLE = keccak256("PAUSE_EXECUTION_ROLE");
     bytes32 public constant RESUME_EXECUTION_ROLE = keccak256("RESUME_EXECUTION_ROLE");
@@ -26,12 +26,13 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     string private constant ERROR_SCRIPT_EXECUTION_PASSED = "DELAY_SCRIPT_EXECUTION_PASSED";
     string private constant ERROR_CAN_NOT_RESUME = "DELAY_CAN_NOT_RESUME";
     string private constant ERROR_CAN_NOT_FORWARD = "DELAY_CAN_NOT_FORWARD";
+    string private constant ERROR_INVALID_EXECUTION_SCRIPT = "DELAY_INVALID_EXECUTION_SCRIPT";
+    string private constant ERROR_INVALID_EXECUTION_DELAY = "DELAY_INVALID_EXECUTION_DELAY";
     string private constant ERROR_INVALID_FEE_TOKEN = "DELAY_INVALID_FEE_TOKEN";
     string private constant ERROR_INVALID_FEE_AMOUNT = "DELAY_INVALID_FEE_AMOUNT";
     string private constant ERROR_INVALID_FEE_DESTINATION = "DELAY_INVALID_FEE_DESTINATION";
     string private constant ERROR_FEE_TRANSFER_REVERTED = "DELAY_FEE_TRANSFER_REVERTED";
-    string private constant ERROR_INVALID_EXECUTION_SCRIPT = "DELAY_INVALID_EXECUTION_SCRIPT";
-
+ 
     struct DelayedScript {
         uint64 executionTime;
         uint64 pausedAt;
@@ -47,14 +48,14 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     uint256 public feeAmount;
     address public feeDestination;
 
-    event DelayedScriptStored(uint256 scriptId, bytes evmCallScript);
-    event ExecutionDelaySet(uint64 executionDelay);
+    event DelayedScriptStored(uint256 scriptId, uint256 feeAmount, uint64 executionTime, bytes evmCallScript);
+    event ChangeExecutionDelay(uint64 executionDelay);
     event ExecutedScript(uint256 scriptId);
     event ExecutionPaused(uint256 scriptId);
-    event ExecutionResumed(uint256 scriptId);
+    event ExecutionResumed(uint256 scriptId, uint64 newExecutionTime);
     event ExecutionCancelled(uint256 scriptId);
-    event ChangeFeeAmount(uint256 previousAmount, uint256 newAmount);
-    event ChangeFeeDestination(address indexed previousDestination, address indexed newDestination);
+    event ChangeFeeAmount(uint256 newAmount);
+    event ChangeFeeDestination(address indexed newDestination);
 
     modifier scriptExists(uint256 _scriptId) {
         require(delayedScripts[_scriptId].executionTime != 0, ERROR_NO_SCRIPT);
@@ -84,10 +85,10 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     * @notice Set the execution delay to `_executionDelay`
     * @param _executionDelay The new execution delay
     */
-    function setExecutionDelay(uint64 _executionDelay) external auth(SET_DELAY_ROLE) {
+    function changeExecutionDelay(uint64 _executionDelay) external auth(CHANGE_DELAY_ROLE) {
+        require(_executionDelay != executionDelay, ERROR_INVALID_EXECUTION_DELAY);
+        emit ChangeExecutionDelay(executionDelay);
         executionDelay = _executionDelay;
-
-        emit ExecutionDelaySet(executionDelay);
     }
 
     /**
@@ -96,7 +97,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     */
     function changeFeeAmount(uint256 _feeAmount) external authP(CHANGE_AMOUNT_ROLE, arr(_feeAmount, feeAmount)) {
         require(_feeAmount != feeAmount, ERROR_INVALID_FEE_AMOUNT);
-        emit ChangeFeeAmount(feeAmount, _feeAmount);
+        emit ChangeFeeAmount(_feeAmount);
         feeAmount = _feeAmount;
     }
 
@@ -106,7 +107,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     */
     function changeFeeDestination(address _feeDestination) external authP(CHANGE_DESTINATION_ROLE, arr(_feeDestination, feeDestination)) {
         require(_feeDestination != feeDestination && _feeDestination != address(0), ERROR_INVALID_FEE_DESTINATION);
-        emit ChangeFeeDestination(feeDestination, _feeDestination);
+        emit ChangeFeeDestination(_feeDestination);
         feeDestination = _feeDestination;
     }
 
@@ -158,7 +159,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         delayedScript.executionTime = delayedScript.executionTime.add(timePaused);
         delayedScript.pausedAt = 0;
 
-        emit ExecutionResumed(_delayedScriptId);
+        emit ExecutionResumed(_delayedScriptId, delayedScript.executionTime);
     }
 
     /**
@@ -170,6 +171,8 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
 
         // Don't do an unnecessary transfer if there was no fee
         if (amount > 0) {
+          // We do not check the transfer with safeTransfer because we want the contract to cancel the execution even if it
+          // does not have the funds.
           feeToken.transfer(feeDestination, amount);
         }
 
@@ -192,6 +195,8 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
 
         // Don't do an unnecessary transfer if there was no fee
         if (delayedScript.feeAmount > 0) {
+          // We do not check the transfer with safeTransfer because we want the contract to perform the execution even if
+          // it does not have the funds to give back to the user.
           feeToken.transfer(delayedScript.sender, delayedScript.feeAmount);
         }
 
@@ -234,12 +239,12 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
             require(feeToken.safeTransferFrom(msg.sender, address(this), feeAmount), ERROR_FEE_TRANSFER_REVERTED);
         }
 
-        uint256 delayedScriptIndex = delayedScriptsNewIndex;
-        delayedScriptsNewIndex++;
+        uint256 delayedScriptIndex = delayedScriptsNewIndex++;
+        uint64 executionTime = getTimestamp64().add(executionDelay);
 
-        delayedScripts[delayedScriptIndex] = DelayedScript(getTimestamp64().add(executionDelay), 0, msg.sender, keccak256(_evmCallScript), feeAmount);
+        delayedScripts[delayedScriptIndex] = DelayedScript(executionTime, 0, msg.sender, keccak256(_evmCallScript), feeAmount);
 
-        emit DelayedScriptStored(delayedScriptIndex, _evmCallScript);
+        emit DelayedScriptStored(delayedScriptIndex, feeAmount, executionTime, _evmCallScript);
 
         return delayedScriptIndex;
     }

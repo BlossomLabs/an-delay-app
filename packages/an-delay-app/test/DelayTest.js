@@ -12,14 +12,14 @@ const { newDao, installNewApp, encodeCallScript } = require('@1hive/contract-hel
 
 contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
   let delayBase, delay
-  let SET_DELAY_ROLE, DELAY_EXECUTION_ROLE, PAUSE_EXECUTION_ROLE, RESUME_EXECUTION_ROLE, CANCEL_EXECUTION_ROLE, CHANGE_AMOUNT_ROLE, CHANGE_DESTINATION_ROLE
+  let CHANGE_DELAY_ROLE, DELAY_EXECUTION_ROLE, PAUSE_EXECUTION_ROLE, RESUME_EXECUTION_ROLE, CANCEL_EXECUTION_ROLE, CHANGE_AMOUNT_ROLE, CHANGE_DESTINATION_ROLE
   let dao, acl
 
   const FEE_AMOUNT = bigExp(5, 18)
 
   before('deploy base apps', async () => {
     delayBase = await Delay.new()
-    SET_DELAY_ROLE = await delayBase.SET_DELAY_ROLE()
+    CHANGE_DELAY_ROLE = await delayBase.CHANGE_DELAY_ROLE()
     DELAY_EXECUTION_ROLE = await delayBase.DELAY_EXECUTION_ROLE()
     PAUSE_EXECUTION_ROLE = await delayBase.PAUSE_EXECUTION_ROLE()
     RESUME_EXECUTION_ROLE = await delayBase.RESUME_EXECUTION_ROLE()
@@ -72,12 +72,12 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
       assert.isTrue(await delay.isForwarder())
     })
 
-    describe('setExecutionDelay(uint256 _executionDelay)', () => {
+    describe('changeExecutionDelay(uint256 _executionDelay)', () => {
       it('sets the execution delay correctly', async () => {
-        await acl.createPermission(rootAccount, delay.address, SET_DELAY_ROLE, rootAccount)
+        await acl.createPermission(rootAccount, delay.address, CHANGE_DELAY_ROLE, rootAccount)
         const expectedExecutionDelay = 20
 
-        await delay.setExecutionDelay(expectedExecutionDelay)
+        await delay.changeExecutionDelay(expectedExecutionDelay)
 
         const actualExecutionDelay = await delay.executionDelay()
         assert.equal(actualExecutionDelay, expectedExecutionDelay)
@@ -522,7 +522,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
 
   describe('app not initialized', async () => {
     it('reverts on setting execution delay', async () => {
-      await assertRevert(delay.setExecutionDelay(9))
+      await assertRevert(delay.changeExecutionDelay(9))
     })
 
     it('reverts on creating delay execution script (delayExecution)', async () => {

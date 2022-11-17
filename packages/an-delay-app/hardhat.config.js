@@ -31,7 +31,7 @@ module.exports = {
     appRoles: [
         {
             "name": "Set delay",
-            "id": "SET_DELAY_ROLE",
+            "id": "CHANGE_DELAY_ROLE",
             "params": []
         },
         {

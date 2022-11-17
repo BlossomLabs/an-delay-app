@@ -4,8 +4,8 @@
   "roles": [
     {
       "name": "Set delay",
-      "id": "SET_DELAY_ROLE",
-      "params": []
+      "id": "CHANGE_DELAY_ROLE",
+      "params": ["New delay", "Current delay"]
     },
     {
       "name": "Delay execution",
