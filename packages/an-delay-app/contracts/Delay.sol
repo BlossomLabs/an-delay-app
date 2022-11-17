@@ -120,6 +120,13 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     }
 
     /**
+     * @dev Disable recovery escape hatch for fee token
+     */
+    function allowRecoverability(address _token) public view returns (bool) {
+        return feeToken != _token;
+    }
+
+    /**
     * @notice Tells the forward fee token and amount of the Delay app
     * @dev IFeeForwarder interface conformance
     * @return Forwarder fee token address
