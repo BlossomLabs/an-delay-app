@@ -1,4 +1,4 @@
-import { ErrorException } from '@1hive/connect-core'
+import { ErrorException, ErrorNotFound } from '@1hive/connect-core'
 import { QueryResult } from '@1hive/connect-thegraph'
 import { DelayedScriptData } from '../../types'
 import { DelayedScript } from '../../models/DelayedScript'
@@ -9,7 +9,7 @@ export const parseDelayedScript = (
   const delayedScript = result.data.delayedScript
 
   if (!delayedScript) {
-    return null
+    throw new ErrorNotFound('Unable to parse delayed script')
   }
 
   const {
