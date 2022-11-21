@@ -19,8 +19,11 @@ The Delay app is initialized with the `_executionDelay` parameter. This defines 
 
 The Delay app should implement the following roles:
 
-- `SET_DELAY_ROLE`: This allows for changing the `executionDelay` period.
+- `CHANGE_DELAY_ROLE`: This allows for changing the `executionDelay` period.
   > Note: Changing the execution delay does not affect current delays.
+- `CHANGE_AMOUNT_ROLE`: This allows for changing the `feeAmount` number.
+  > Note: Changing the fee amount does not affect current delays.
+- `CHANGE_DESTINATION_ROLE`: This allows for changing the `feeDestination` address.
 - `DELAY_EXECUTION_ROLE`: Any entity with this role can delay an intent.
 - `PAUSE_EXECUTION_ROLE`: This allows for pausing a delay.
 - `RESUME_EXECUTION_ROLE`: This allows for resuming a paused delay.

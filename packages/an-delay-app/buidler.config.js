@@ -18,6 +18,13 @@ module.exports = {
     coverage: {
       url: 'http://localhost:8555',
     },
+    // Network configured to interact with Frame wallet. Requires
+    // to have Frame running on your machine. Download it from:
+    // https://frame.sh
+    frame: {
+      httpHeaders: { origin: 'buidler' },
+      url: 'http://localhost:1248',
+    },
   },
   solc: {
     version: '0.4.24',

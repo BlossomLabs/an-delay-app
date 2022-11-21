@@ -64,7 +64,7 @@ Next, copy the proxy address of the app and create another environment variable 
 
 ### The following permissions need to be created for the Delay app to function properly:
 
-- SET_DELAY_ROLE
+- CHANGE_DELAY_ROLE
 - DELAY_EXECUTION_ROLE
 - PAUSE_EXECUTION_ROLE
 - RESUME_EXECUTION_ROLE
@@ -81,7 +81,7 @@ dao acl create $dao $delay DELAY_EXECUTION_ROLE $voting $voting --environment ar
 This grants the voting app the permission to set the delay execution
 
 ```sh
-dao acl create $dao $delay SET_DELAY_ROLE $voting $voting --environment aragon:rinkeby
+dao acl create $dao $delay CHANGE_DELAY_ROLE $voting $voting --environment aragon:rinkeby
 ```
 
 This grants the tokens app the permission to pause a delayed script.
