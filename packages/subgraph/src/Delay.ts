@@ -1,31 +1,33 @@
-import { store } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
   DelayedScriptStored as DelayedScriptStoredEvent,
   ExecutedScript as ExecutedScriptEvent,
   ExecutionCancelled as ExecutionCancelledEvent,
-  ExecutionDelaySet as ExecutionDelaySetEvent,
+  ChangeExecutionDelay as ChangeExecutionDelayEvent,
   ExecutionPaused as ExecutionPausedEvent,
   ExecutionResumed as ExecutionResumedEvent,
+  ChangeFeeAmount as ChangeFeeAmountEvent,
+  ChangeFeeDestination as ChangeFeeDestinationEvent,
 } from "../generated/templates/Delay/Delay";
 import {
   buildDelayedScriptEntityId,
   getDelayAppEntity,
   getDelayedScriptEntity,
-  updateDelayedScript,
 } from "./helpers";
 
 export function handleDelayedScriptStored(e: DelayedScriptStoredEvent): void {
-  updateDelayedScript(e.address, e.params.scriptId);
-
   const delayedScript = getDelayedScriptEntity(e.address, e.params.scriptId);
 
+  delayedScript.feeAmount = e.params.feeAmount;
+  delayedScript.executionTime = e.params.executionTime;
+  delayedScript.evmCallScript = e.params.evmCallScript;
   delayedScript.creator = e.transaction.from;
   delayedScript.timeSubmitted = e.block.timestamp;
 
   delayedScript.save();
 }
 
-export function handleExecutionDelaySet(e: ExecutionDelaySetEvent): void {
+export function handleChangeExecutionDelay(e: ChangeExecutionDelayEvent): void {
   const delayApp = getDelayAppEntity(e.address);
 
   delayApp.executionDelay = e.params.executionDelay;
@@ -41,11 +43,20 @@ export function handleExecutedScript(e: ExecutedScriptEvent): void {
 }
 
 export function handleExecutionPaused(e: ExecutionPausedEvent): void {
-  updateDelayedScript(e.address, e.params.scriptId);
+  const delayedScript = getDelayedScriptEntity(e.address, e.params.scriptId);
+
+  delayedScript.pausedAt = e.block.timestamp;
+
+  delayedScript.save();
 }
 
 export function handleExecutionResumed(e: ExecutionResumedEvent): void {
-  updateDelayedScript(e.address, e.params.scriptId);
+  const delayedScript = getDelayedScriptEntity(e.address, e.params.scriptId);
+
+  delayedScript.pausedAt = BigInt.fromI32(0);
+  delayedScript.executionTime = e.params.newExecutionTime;
+
+  delayedScript.save();
 }
 
 export function handleExecutionCancelled(e: ExecutionCancelledEvent): void {
@@ -53,4 +64,20 @@ export function handleExecutionCancelled(e: ExecutionCancelledEvent): void {
     "DelayedScript",
     buildDelayedScriptEntityId(e.address, e.params.scriptId)
   );
+}
+
+export function handleChangeFeeAmount(e: ChangeFeeAmountEvent): void {
+  const delayApp = getDelayAppEntity(e.address);
+
+  delayApp.feeAmount = e.params.newAmount;
+
+  delayApp.save();
+}
+
+export function handleChangeFeeDestination(e: ChangeFeeDestinationEvent): void {
+  const delayApp = getDelayAppEntity(e.address);
+
+  delayApp.feeDestination = e.params.newDestination;
+
+  delayApp.save();
 }

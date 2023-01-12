@@ -1,21 +1,35 @@
 import { Address } from "@graphprotocol/graph-ts";
 import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
-import { getDelayAppEntity } from "./helpers";
+import { ERC20 as ERC20Contract } from "../generated/templates/Delay/ERC20";
+import { getDelayAppEntity, getERC20TokenEntity } from "./helpers";
 
-const setUpDelayApp = (appAddress: Address): void => {
+function setUpDelayApp(appAddress: Address): void {
   const delayApp = getDelayAppEntity(appAddress);
   const delayContract = DelayContract.bind(appAddress);
-  const executionDelay = delayContract.executionDelay();
+  const feeTokenAddress = delayContract.feeToken();
+  const feeToken = getERC20TokenEntity(feeTokenAddress);
+  const feeTokenContract = ERC20Contract.bind(feeTokenAddress);
 
-  delayApp.executionDelay = executionDelay;
+  const res =  feeTokenContract.try_symbol();
+
+  if (!res.reverted) {
+    feeToken.symbol =res.value
+    feeToken.name = feeTokenContract.name();
+    feeToken.decimals = feeTokenContract.decimals();
+  }
+
+  delayApp.executionDelay = delayContract.executionDelay();
   delayApp.orgAddress = delayContract.kernel();
+  delayApp.feeAmount = delayContract.feeAmount();
+  delayApp.feeDestination = delayContract.feeDestination();
+  delayApp.feeToken = feeToken.id;
 
   delayApp.save();
-};
+  feeToken.save();
+}
 
 const AN_DELAY_APP_IDS = [
   "0x13351f498ea57d9ad3e357afdb38bebae832341c89e544d5e8091ead272f605d", // an-delay.open.aragonpm.eth
-  "0x89a9bbd656859e3d78cabb826d05f627ef0f61f4b6ddd49a749728495af630a2", // delay.open.aragonpm.eth
 ];
 
 /*

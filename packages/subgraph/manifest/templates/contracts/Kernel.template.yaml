@@ -24,6 +24,8 @@
     abis:
       - name: Delay
         file: ./abis/Delay.json
+      - name: ERC20
+        file: ./abis/ERC20.json
       - name: DAOFactory
         file: ./abis/DAOFactory.json
       - name: DAOKit

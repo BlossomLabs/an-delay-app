@@ -14,17 +14,17 @@
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "SET_DELAY_ROLE",
-    "outputs": [
+    "constant": false,
+    "inputs": [
       {
-        "name": "",
-        "type": "bytes32"
+        "name": "_feeDestination",
+        "type": "address"
       }
     ],
+    "name": "changeFeeDestination",
+    "outputs": [],
     "payable": false,
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -47,6 +47,20 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_feeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "changeFeeAmount",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [],
     "name": "getRecoveryVault",
@@ -54,6 +68,20 @@
       {
         "name": "",
         "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "CHANGE_DELAY_ROLE",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "payable": false,
@@ -72,6 +100,66 @@
     ],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_delayedScriptId",
+        "type": "uint256"
+      },
+      {
+        "name": "_evmCallScript",
+        "type": "bytes"
+      }
+    ],
+    "name": "execute",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "feeToken",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "feeAmount",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_executionDelay",
+        "type": "uint64"
+      }
+    ],
+    "name": "changeExecutionDelay",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -97,7 +185,7 @@
     "constant": true,
     "inputs": [
       {
-        "name": "token",
+        "name": "_token",
         "type": "address"
       }
     ],
@@ -162,6 +250,20 @@
       {
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "CHANGE_DESTINATION_ROLE",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "payable": false,
@@ -317,17 +419,21 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
+    "constant": true,
+    "inputs": [],
+    "name": "forwardFee",
+    "outputs": [
       {
-        "name": "_executionDelay",
-        "type": "uint64"
+        "name": "",
+        "type": "address"
+      },
+      {
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "setExecutionDelay",
-    "outputs": [],
     "payable": false,
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -343,6 +449,20 @@
       {
         "name": "",
         "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "CHANGE_AMOUNT_ROLE",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "payable": false,
@@ -392,11 +512,37 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "feeDestination",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
         "name": "_executionDelay",
         "type": "uint64"
+      },
+      {
+        "name": "_feeToken",
+        "type": "address"
+      },
+      {
+        "name": "_feeAmount",
+        "type": "uint256"
+      },
+      {
+        "name": "_feeDestination",
+        "type": "address"
       }
     ],
     "name": "initialize",
@@ -438,8 +584,16 @@
         "type": "uint64"
       },
       {
-        "name": "evmCallScript",
-        "type": "bytes"
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "name": "evmCallScriptHash",
+        "type": "bytes32"
+      },
+      {
+        "name": "feeAmount",
+        "type": "uint256"
       }
     ],
     "payable": false,
@@ -461,26 +615,27 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_delayedScriptId",
-        "type": "uint256"
-      }
-    ],
-    "name": "execute",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
         "indexed": false,
         "name": "scriptId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "feeAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "executionTime",
+        "type": "uint64"
+      },
+      {
+        "indexed": false,
+        "name": "evmCallScript",
+        "type": "bytes"
       }
     ],
     "name": "DelayedScriptStored",
@@ -495,7 +650,7 @@
         "type": "uint64"
       }
     ],
-    "name": "ExecutionDelaySet",
+    "name": "ChangeExecutionDelay",
     "type": "event"
   },
   {
@@ -529,6 +684,11 @@
         "indexed": false,
         "name": "scriptId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "newExecutionTime",
+        "type": "uint64"
       }
     ],
     "name": "ExecutionResumed",
@@ -544,6 +704,30 @@
       }
     ],
     "name": "ExecutionCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "newAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ChangeFeeAmount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "newDestination",
+        "type": "address"
+      }
+    ],
+    "name": "ChangeFeeDestination",
     "type": "event"
   },
   {

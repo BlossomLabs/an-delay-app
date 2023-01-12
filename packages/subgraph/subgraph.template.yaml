@@ -30,17 +30,23 @@ templates:
       abis:
         - name: Delay
           file: ./abis/Delay.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
-        - event: DelayedScriptStored(uint256)
+        - event: DelayedScriptStored(uint256,uint256,uint64,bytes)
           handler: handleDelayedScriptStored
-        - event: ExecutionDelaySet(uint64)
-          handler: handleExecutionDelaySet
+        - event: ChangeExecutionDelay(uint64)
+          handler: handleChangeExecutionDelay
         - event: ExecutedScript(uint256)
           handler: handleExecutedScript
         - event: ExecutionPaused(uint256)
           handler: handleExecutionPaused
-        - event: ExecutionResumed(uint256)
+        - event: ExecutionResumed(uint256,uint64)
           handler: handleExecutionResumed
         - event: ExecutionCancelled(uint256)
           handler: handleExecutionCancelled
+        - event: ChangeFeeAmount(uint256)
+          handler: handleChangeFeeAmount
+        - event: ChangeFeeDestination(indexed address)
+          handler: handleChangeFeeDestination
       file: ./src/Delay.ts

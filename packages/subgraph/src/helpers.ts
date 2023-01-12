@@ -1,22 +1,26 @@
-import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
   DelayApp as DelayAppEntity,
   DelayedScript as DelayedScriptEntity,
+  ERC20 as ERC20Entity,
 } from "../generated/schema";
-import { Delay as DelayContract } from "../generated/templates/Delay/Delay";
 
-export const buildDelayAppEntityId = (appAddress: Address): string => {
+export function buildDelayAppEntityId(appAddress: Address): string {
   return appAddress.toHexString();
-};
+}
 
-export const buildDelayedScriptEntityId = (
+export function buildDelayedScriptEntityId(
   appAddress: Address,
   scriptIndex: BigInt
-): string => {
+): string {
   return `${appAddress.toHexString()}-${scriptIndex.toString()}`;
-};
+}
 
-export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
+export function buildERC20EntityId(tokenAddress: Address): string {
+  return tokenAddress.toHexString();
+}
+
+export function getDelayAppEntity(appAddress: Address): DelayAppEntity {
   const delayAppId = buildDelayAppEntityId(appAddress);
   let delayApp = DelayAppEntity.load(delayAppId);
 
@@ -28,7 +32,7 @@ export const getDelayAppEntity = (appAddress: Address): DelayAppEntity => {
   }
 
   return delayApp;
-};
+}
 
 export const getDelayedScriptEntity = (
   appAddress: Address,
@@ -51,35 +55,23 @@ export const getDelayedScriptEntity = (
     delayedScript.pausedAt = BigInt.fromI32(0);
     delayedScript.timeSubmitted = BigInt.fromI32(0);
     delayedScript.totalTimePaused = BigInt.fromI32(0);
+    delayedScript.feeAmount = BigInt.fromI32(0);
   }
 
   return delayedScript;
 };
 
-export const updateDelayedScript = (
-  appAddress: Address,
-  scriptIndex: BigInt
-): void => {
-  const delayContract = DelayContract.bind(appAddress);
-  const delayedScriptRes = delayContract.delayedScripts(scriptIndex);
+export function getERC20TokenEntity(tokenAddress: Address): ERC20Entity {
+  const erc20Id = buildERC20EntityId(tokenAddress);
+  let erc20 = ERC20Entity.load(erc20Id);
 
-  if (delayedScriptRes.getExecutionTime() === BigInt.fromU32(0)) {
-    return;
+  if (!erc20) {
+    erc20 = new ERC20Entity(erc20Id);
+    erc20.address = tokenAddress;
+    erc20.decimals = 0;
+    erc20.name = "";
+    erc20.symbol = "";
   }
 
-  const delayedScript = getDelayedScriptEntity(appAddress, scriptIndex);
-
-  const newExecutionTime = delayedScriptRes.getExecutionTime();
-  const oldExecutionTime = delayedScript.executionTime.equals(BigInt.fromI32(0))
-    ? newExecutionTime
-    : delayedScript.executionTime;
-  const timePaused = newExecutionTime.minus(oldExecutionTime);
-
-  delayedScript.evmCallScript = delayedScriptRes.getEvmCallScript();
-  delayedScript.executionTime = newExecutionTime;
-  delayedScript.pausedAt = delayedScriptRes.getPausedAt();
-  delayedScript.totalTimePaused =
-    delayedScript.totalTimePaused.plus(timePaused);
-
-  delayedScript.save();
-};
+  return erc20;
+}

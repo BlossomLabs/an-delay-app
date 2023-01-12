@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "changeset:release": "yarn build && changeset publish",
+    "changeset:release": "yarn build:connector && changeset publish",
     "changeset:version": "changeset version",
     "build": "yarn build:connector && yarn build:an-delay-app",
     "build:connector": "cd packages/connector && yarn build",

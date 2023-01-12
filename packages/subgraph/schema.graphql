@@ -3,6 +3,9 @@ type DelayApp @entity {
   appAddress: Bytes!
   orgAddress: Bytes!
   executionDelay: BigInt!
+  feeAmount: BigInt!
+  feeDestination: Bytes!
+  feeToken: ERC20!
   delayedScripts: [DelayedScript!]! @derivedFrom(field: "delayApp")
 }
 
@@ -14,8 +17,17 @@ type DelayedScript @entity {
   executionTime: BigInt!
   pausedAt: BigInt!
   timeSubmitted: BigInt!
+  feeAmount: BigInt!
   totalTimePaused: BigInt!
   delayApp: DelayApp!
+}
+
+type ERC20 @entity {
+  id: ID!
+  address: Bytes!
+  name: String!
+  symbol: String!
+  decimals: Int!
 }
 
 type AragonInfo @entity {
