@@ -9,11 +9,20 @@ export type SubscriptionStart<T> = (
 ) => SubscriptionHandler
 export type SubscriptionResult<T> = SubscriptionHandler | SubscriptionStart<T>
 
+export interface ERC20 {
+  address: string
+  name: string
+  decimals: string
+  symbol: string
+}
 export interface DelayAppData {
   id: string
   appAddress: string
   orgAddress: string
   executionDelay: string
+  feeAmount: string
+  feeDestination: string
+  feeToken: ERC20
 }
 
 export interface DelayedScriptData {
@@ -25,6 +34,7 @@ export interface DelayedScriptData {
   pausedAt: string
   timeSubmitted: string
   totalTimePaused: string
+  feeAmount: string
 }
 
 export interface ANDelayConnector {

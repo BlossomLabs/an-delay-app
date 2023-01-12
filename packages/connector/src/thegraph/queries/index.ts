@@ -9,6 +9,14 @@ export const GET_DELAY_APP = (type: OperationType): ReturnType<typeof gql> => gq
       executionDelay
       appAddress
       orgAddress
+      feeAmount
+      feeDestination
+      feeToken {
+        address
+        decimals
+        name
+        symbol
+      }
     }
   }
 `
@@ -23,6 +31,7 @@ export const GET_DELAYED_SCRIPT = (type: OperationType): ReturnType<typeof gql> 
       pausedAt
       timeSubmitted
       totalTimePaused
+      feeAmount
     }
   }
 `

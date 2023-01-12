@@ -9,7 +9,29 @@ export const parseDelayApp = (result: QueryResult): DelayAppData | null => {
     throw new ErrorNotFound('Unable to parse delay app data')
   }
 
-  const { appAddress, executionDelay, id, orgAddress } = delayApp
+  const {
+    appAddress,
+    executionDelay,
+    id,
+    orgAddress,
+    feeAmount,
+    feeDestination,
+    feeToken,
+  } = delayApp
+  const { address, decimals, name, symbol } = feeToken
 
-  return { appAddress, executionDelay, id, orgAddress }
+  return {
+    appAddress,
+    executionDelay,
+    id,
+    orgAddress,
+    feeAmount,
+    feeDestination,
+    feeToken: {
+      address,
+      decimals,
+      name,
+      symbol,
+    }
+  }
 }

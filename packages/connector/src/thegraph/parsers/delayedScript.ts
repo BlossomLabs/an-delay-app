@@ -20,6 +20,7 @@ export const parseDelayedScript = (
     pausedAt,
     timeSubmitted,
     totalTimePaused,
+    feeAmount
   } = delayedScript
 
   return {
@@ -30,6 +31,7 @@ export const parseDelayedScript = (
     pausedAt,
     timeSubmitted,
     totalTimePaused,
+    feeAmount
   }
 }
 

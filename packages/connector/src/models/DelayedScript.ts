@@ -8,6 +8,7 @@ export class DelayedScript {
   readonly pausedAt: string
   readonly timeSubmitted: string
   readonly totalTimePaused: string
+  readonly feeAmount: string
 
   constructor(data: DelayedScriptData) {
     this.id = data.index
@@ -17,5 +18,6 @@ export class DelayedScript {
     this.pausedAt = data.pausedAt
     this.timeSubmitted = data.timeSubmitted
     this.totalTimePaused = data.totalTimePaused
+    this.feeAmount = data.feeAmount
   }
 }
