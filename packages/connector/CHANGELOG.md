@@ -1,5 +1,11 @@
 # @blossom-labs/connect-an-delay
 
+## 0.3.0
+
+### Minor Changes
+
+- Expose fee token, receipient and amount
+
 ## 0.2.1
 
 ### Patch Changes
