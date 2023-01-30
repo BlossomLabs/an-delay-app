@@ -44,7 +44,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
 
     uint64 public initialExcutionDelay;
     uint64 public executionDelay;
-    uint256 public delayedScriptsNewIndex = 0;
+    uint256 public delayedScriptsNewIndex;
     mapping(uint256 => DelayedScript) public delayedScripts;
     uint256 public feeAmount;
     ERC20 public feeToken;
