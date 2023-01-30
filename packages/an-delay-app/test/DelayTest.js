@@ -73,14 +73,23 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
     })
 
     describe('changeExecutionDelay(uint256 _executionDelay)', () => {
-      it('sets the execution delay correctly', async () => {
+      beforeEach(async () => {
         await acl.createPermission(rootAccount, delay.address, CHANGE_DELAY_ROLE, rootAccount)
-        const expectedExecutionDelay = 20
+      })
+
+      it('sets the execution delay correctly', async () => {
+        const expectedExecutionDelay = 200
 
         await delay.changeExecutionDelay(expectedExecutionDelay)
 
         const actualExecutionDelay = await delay.executionDelay()
         assert.equal(actualExecutionDelay, expectedExecutionDelay)
+      })
+
+      it('fails when trying to set a lower execution delay', async () => {
+        const expectedExecutionDelay = 20
+
+        await assertRevert(delay.changeExecutionDelay(expectedExecutionDelay), 'DELAY_EXECUTION_DELAY_TOO_LOW')
       })
     })
 

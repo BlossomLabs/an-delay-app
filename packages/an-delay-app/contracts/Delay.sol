@@ -28,6 +28,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     string private constant ERROR_CAN_NOT_FORWARD = "DELAY_CAN_NOT_FORWARD";
     string private constant ERROR_INVALID_EXECUTION_SCRIPT = "DELAY_INVALID_EXECUTION_SCRIPT";
     string private constant ERROR_INVALID_EXECUTION_DELAY = "DELAY_INVALID_EXECUTION_DELAY";
+    string private constant ERROR_EXECUTION_DELAY_TOO_LOW = "DELAY_EXECUTION_DELAY_TOO_LOW";
     string private constant ERROR_INVALID_FEE_TOKEN = "DELAY_INVALID_FEE_TOKEN";
     string private constant ERROR_INVALID_FEE_AMOUNT = "DELAY_INVALID_FEE_AMOUNT";
     string private constant ERROR_INVALID_FEE_DESTINATION = "DELAY_INVALID_FEE_DESTINATION";
@@ -41,11 +42,12 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         uint256 feeAmount;
     }
 
+    uint64 public initialExcutionDelay;
     uint64 public executionDelay;
     uint256 public delayedScriptsNewIndex = 0;
     mapping(uint256 => DelayedScript) public delayedScripts;
-    ERC20 public feeToken;
     uint256 public feeAmount;
+    ERC20 public feeToken;
     address public feeDestination;
 
     event DelayedScriptStored(uint256 scriptId, uint256 feeAmount, uint64 executionTime, bytes evmCallScript);
@@ -74,6 +76,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         require(_feeDestination != address(0), ERROR_INVALID_FEE_DESTINATION);
         require(address(_feeToken) != address(0), ERROR_INVALID_FEE_TOKEN);
 
+        initialExcutionDelay = _executionDelay;
         executionDelay = _executionDelay;
 
         feeToken = _feeToken;
@@ -87,6 +90,7 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
     */
     function changeExecutionDelay(uint64 _executionDelay) external auth(CHANGE_DELAY_ROLE) {
         require(_executionDelay != executionDelay, ERROR_INVALID_EXECUTION_DELAY);
+        require(_executionDelay >= initialExcutionDelay, ERROR_EXECUTION_DELAY_TOO_LOW);
         emit ChangeExecutionDelay(executionDelay);
         executionDelay = _executionDelay;
     }
