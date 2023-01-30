@@ -180,7 +180,9 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         if (amount > 0) {
           // We do not check the transfer with safeTransfer because we want the contract to cancel the execution even if it
           // does not have the funds.
-          feeToken.transfer(feeDestination, amount);
+          feeToken.call(
+            abi.encodeWithSignature("transfer(address,uint256)", feeDestination, amount)
+          );
         }
 
         delete delayedScripts[_delayedScriptId];
@@ -204,7 +206,9 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
         if (delayedScript.feeAmount > 0) {
           // We do not check the transfer with safeTransfer because we want the contract to perform the execution even if
           // it does not have the funds to give back to the user.
-          feeToken.transfer(delayedScript.sender, delayedScript.feeAmount);
+          feeToken.call(
+            abi.encodeWithSignature("transfer(address,uint256)", delayedScript.sender, delayedScript.feeAmount)
+          );
         }
 
         runScript(_evmCallScript, new bytes(0), new address[](0));
