@@ -1,5 +1,11 @@
 # @blossom-labs/connect-an-delay
 
+## 0.3.1
+
+### Patch Changes
+
+- a155624: Support orderBy and orderDirection on delayed scripts
+
 ## 0.3.0
 
 ### Minor Changes
