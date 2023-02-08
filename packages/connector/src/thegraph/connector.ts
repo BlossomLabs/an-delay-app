@@ -23,6 +23,8 @@ type ANDelayConnectorTheGraphConfig = {
 
 export const subgraphUrlFromChainId = (chainId: number): string | null => {
   switch (chainId) {
+    case 1:
+      return 'https://api.thegraph.com/subgraphs/name/blossomlabs/aragon-an-delay-mainnet'
     case 100:
       return 'https://api.thegraph.com/subgraphs/name/blossomlabs/aragon-an-delay-gnosis'
     default:
