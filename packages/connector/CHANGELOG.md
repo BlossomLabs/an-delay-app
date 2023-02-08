@@ -1,5 +1,11 @@
 # @blossom-labs/connect-an-delay
 
+## 0.3.2
+
+### Patch Changes
+
+- Add support to mainnet
+
 ## 0.3.1
 
 ### Patch Changes
