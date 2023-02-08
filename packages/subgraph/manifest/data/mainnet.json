@@ -1,0 +1,17 @@
+{
+  "network": "mainnet",
+  "dataSources": {
+    "Organizations": [
+      {
+        "name": "AragonDAO",
+        "address": "0x08101cFEA107326820C701A8A5caD87620670a99",
+        "startBlock": "16584932"
+      }
+    ],
+    "OrganizationFactories": [],
+    "OrganizationTemplates": [],
+    "LegacyOrganizationTemplates": [],
+    "TokenFactories": [],
+    "Tokens": []
+  }
+}
