@@ -8,6 +8,7 @@ import {
   ExecutionResumed as ExecutionResumedEvent,
   ChangeFeeAmount as ChangeFeeAmountEvent,
   ChangeFeeDestination as ChangeFeeDestinationEvent,
+  Delay as DelayContract,
 } from "../generated/templates/Delay/Delay";
 import {
   buildDelayedScriptEntityId,
@@ -29,8 +30,12 @@ export function handleDelayedScriptStored(e: DelayedScriptStoredEvent): void {
 
 export function handleChangeExecutionDelay(e: ChangeExecutionDelayEvent): void {
   const delayApp = getDelayAppEntity(e.address);
-
-  delayApp.executionDelay = e.params.executionDelay;
+  const delayContract = DelayContract.bind(e.address)
+  /**
+   * This is a workaround for a bug in the contract which emits the previous
+   * execution delay instead of the new one.
+   */
+  delayApp.executionDelay = delayContract.executionDelay();
 
   delayApp.save();
 }
