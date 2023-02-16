@@ -182,10 +182,14 @@ contract Delay is AragonApp, IForwarder, IForwarderFee {
 
         // Don't do an unnecessary transfer if there was no fee
         if (amount > 0) {
+          address destination = feeDestination;
+          if (destination == address(-1)) {
+            destination = delayedScripts[_delayedScriptId].sender;
+          }
           // We do not check the transfer with safeTransfer because we want the contract to cancel the execution even if it
           // does not have the funds.
           feeToken.call(
-            abi.encodeWithSignature("transfer(address,uint256)", feeDestination, amount)
+            abi.encodeWithSignature("transfer(address,uint256)", destination, amount)
           );
         }
 
