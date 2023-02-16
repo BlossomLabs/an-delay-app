@@ -8,7 +8,7 @@ const { timeTravel } = require('./helpers/helpers')
 
 const { ZERO_ADDRESS, bigExp, getEventArgument, bn } = require('@1hive/contract-helpers-test/src')
 const { assertRevert, assertEvent } = require('@1hive/contract-helpers-test/src/asserts')
-const { newDao, installNewApp, encodeCallScript } = require('@1hive/contract-helpers-test/src/aragon-os')
+const { newDao, installNewApp, encodeCallScript, ANY_ENTITY } = require('@1hive/contract-helpers-test/src/aragon-os')
 
 contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
   let delayBase, delay
@@ -222,7 +222,7 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
         context('when the sender has approved the fee costs to the delay app', () => {
           beforeEach(async () => {
             await feeToken.approve(delay.address, FEE_AMOUNT)
-            await delay.delayExecution(script)
+            await delay.delayExecution(script, {from: rootAccount})
           })
 
           it('stores delayed execution script and updates new script index', async () => {
@@ -429,27 +429,34 @@ contract('Delay', ([rootAccount, someone, destination, anotherDestination]) => {
             assert.equal(actualPausedAt, 0)
           })
 
-          const checkFeeAmountIsTransferred = async () => {
+          const checkFeeAmountIsTransferred = dest => async () => {
             const delayPreviousBalance = await feeToken.balanceOf(delay.address)
-            const destinationPreviousBalance = await feeToken.balanceOf(destination)
+            const destinationPreviousBalance = await feeToken.balanceOf(dest)
 
             await delay.cancelExecution(0)
 
             const delayCurrentBalance = await feeToken.balanceOf(delay.address)
-            const destinationCurrentBalance = await feeToken.balanceOf(destination)
+            const destinationCurrentBalance = await feeToken.balanceOf(dest)
 
             assert.equal(delayCurrentBalance.toString(), delayPreviousBalance.sub(FEE_AMOUNT).toString(), 'delay current balance does not match')
             assert.equal(destinationCurrentBalance.toString(), destinationPreviousBalance.add(FEE_AMOUNT).toString(), 'destination current balance does not match')
           } 
 
-          it('transfers the fee amount to the destination address', checkFeeAmountIsTransferred)
+          it('transfers the fee amount to the destination address', checkFeeAmountIsTransferred(destination))
 
           context('even if fee amount changes', () => {
-            before(async () => {
+            beforeEach(async () => {
               await delay.changeFeeAmount(0)
             })
 
-            it('transfers the fee amount to the destination address', checkFeeAmountIsTransferred)
+            it('transfers the fee amount to the destination address', checkFeeAmountIsTransferred(destination))
+          })
+
+          context('if the fee destination is not set', () => {
+            beforeEach(async () => {
+              await delay.changeFeeDestination(ANY_ENTITY)
+            })
+            it('transfers back the fee amount to the user', checkFeeAmountIsTransferred(rootAccount))
           })
 
           it('reverts when cancelling non-existent script', async () => {
