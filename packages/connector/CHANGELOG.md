@@ -1,5 +1,11 @@
 # @blossom-labs/connect-an-delay
 
+## 0.3.3
+
+### Patch Changes
+
+- c8f005e: Add support to Optimism
+
 ## 0.3.2
 
 ### Patch Changes
