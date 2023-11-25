@@ -2,6 +2,7 @@
   "name": "@blossom-labs/an-delay-app",
   "version": "0.0.1",
   "description": "",
+  "private": true,
   "dependencies": {
     "@1hive/hardhat-aragon": "^0.1.0",
     "@aragon/apps-shared-minime": "^1.0.1",
