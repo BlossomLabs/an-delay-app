@@ -17,3 +17,7 @@ yarn.lock
 packages/an-delay-app/artifacts
 cache
 .cache
+
+
+artifacts
+deployments
