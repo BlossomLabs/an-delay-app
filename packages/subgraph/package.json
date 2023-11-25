@@ -8,11 +8,13 @@
     "manifest-gnosis": "env scripts/build-manifest.sh gnosis",
     "manifest-gnosis-staging": "env STAGING=true scripts/build-manifest.sh gnosis",
     "manifest-mainnet": "env scripts/build-manifest.sh mainnet",
+    "manifest-optimism": "env scripts/build-manifest.sh optimism",
     "create-local": "graph create an-delay --node http://127.0.0.1:8020",
     "deploy-local": "graph deploy an-delay --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020",
     "deploy-gnosis": "scripts/deploy.sh blossomlabs an-delay gnosis",
     "deploy-gnosis-staging": "STAGING=true scripts/deploy.sh blossomlabs an-delay gnosis",
-    "deploy-mainnet": "scripts/deploy.sh blossomlabs an-delay mainnet"
+    "deploy-mainnet": "scripts/deploy.sh blossomlabs an-delay mainnet",
+    "deploy-optimism": "scripts/deploy.sh blossomlabs an-delay optimism"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
